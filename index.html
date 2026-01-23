@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Block Blast - Puzzle Game</title>
+    <title>Block Barrr - Puzzle Game</title>
     <style>
         * {
             margin: 0;
@@ -183,9 +183,10 @@
         }
 
         .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         button {
@@ -202,6 +203,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            min-width: 200px;
         }
 
         button:hover {
@@ -219,10 +221,6 @@
 
         #hint-btn {
             background: linear-gradient(135deg, #ff8a00, #ff5252);
-        }
-
-        #rotate-btn {
-            background: linear-gradient(135deg, #69f0ae, #00c853);
         }
 
         /* Game Over Overlay */
@@ -325,10 +323,12 @@
             button {
                 padding: 15px;
                 font-size: 1rem;
+                min-width: 150px;
             }
             
             .controls-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: center;
             }
         }
 
@@ -354,8 +354,8 @@
             }
         }
 
-        /* Simple shadow for drag */
-        .drag-shadow {
+        /* Drag preview */
+        .drag-preview {
             position: absolute;
             pointer-events: none;
             z-index: 50;
@@ -363,7 +363,7 @@
             transition: none;
         }
 
-        /* Score popup - simple */
+        /* Score popup */
         .score-popup {
             position: absolute;
             font-size: 1.4rem;
@@ -385,7 +385,7 @@
     <div class="container">
         <div class="header">
             <h1>BLOCK BARRR</h1>
-            <p class="subtitle">Tempatkan blok warna-warni dan ledakkan baris & kolom!</p>
+            <p class="subtitle">Bisa maen nya ga lu?</p>
         </div>
 
         <div class="game-area">
@@ -441,17 +441,13 @@
             </div>
         </div>
 
-        <!-- Panel Kontrol -->
+        <!-- Panel Kontrol - HANYA 2 TOMBOL SEKARANG -->
         <div class="controls-container">
             <h2>KONTROL</h2>
             <div class="controls-grid">
                 <button id="hint-btn">
                     <span style="font-size: 1.2em;">🔍</span>
                     PETUNJUK
-                </button>
-                <button id="rotate-btn">
-                    <span style="font-size: 1.2em;">↻</span>
-                    PUTAR (R)
                 </button>
                 <button id="restart-btn">
                     <span style="font-size: 1.2em;">🔄</span>
@@ -464,52 +460,46 @@
         <div class="instructions">
             <h2>CARA BERMAIN</h2>
             <ul class="instruction-list">
+                <li><strong>Serius lu main ginian aja liat petunjuk???</strong></li>
                 <li><strong>Seret dan lepaskan</strong> blok dari panel kanan ke papan game</li>
-                <li><strong>Putar blok</strong> dengan tombol R atau tombol putar saat menyeret</li>
-                <li><strong>Isi baris atau kolom</strong> penuh untuk menghapusnya</li>
+                <li><strong>Bayangan hijau</strong> menunjukkan posisi valid</li>
+                <li><strong>Bayangan merah</strong> menunjukkan posisi tidak valid</li>
+                <li><strong>Isi baris atau kolom</strong> penuh untuk menghapusnya dan dapatkan skor</li>
                 <li><strong>Game over</strong> ketika tidak ada ruang tersisa</li>
             </ul>
         </div>
     </div>
 
     <script>
-        // Warna-warni yang menarik tanpa efek berlebihan
+        // Warna-warni yang menarik
         const BLOCK_COLORS = [
-            // Merah dan Pink
-            '#FF5252', '#FF4081', '#E91E63',
-            // Ungu dan Violet
-            '#9C27B0', '#673AB7', '#3F51B5',
-            // Biru dan Cyan
-            '#2196F3', '#03A9F4', '#00BCD4',
-            // Hijau dan Lime
-            '#4CAF50', '#8BC34A', '#CDDC39',
-            // Kuning dan Amber
-            '#FFEB3B', '#FFC107', '#FF9800',
-            // Oranye dan Deep Orange
-            '#FF5722', '#795548'
+            '#FF5252', '#FF4081', '#E91E63',  // Merah dan Pink
+            '#9C27B0', '#673AB7', '#3F51B5',  // Ungu dan Violet
+            '#2196F3', '#03A9F4', '#00BCD4',  // Biru dan Cyan
+            '#4CAF50', '#8BC34A', '#CDDC39',  // Hijau dan Lime
+            '#FFEB3B', '#FFC107', '#FF9800',  // Kuning dan Amber
+            '#FF5722', '#795548'              // Oranye
         ];
 
         // Bentuk-bentuk blok
         const BLOCK_SHAPES = [
-            [[1]],
-            [[1, 1]],
-            [[1], [1]],
-            [[1, 0], [1, 1]],
-            [[1, 1], [1, 0]],
-            [[1, 1], [0, 1]],
-            [[0, 1], [1, 1]],
-            [[1, 1, 1]],
-            [[1], [1], [1]],
-            [[1, 1], [1, 1]],
-            [[1, 1, 1], [0, 1, 0]],
-            [[0, 1, 0], [1, 1, 1]],
-            [[0, 1], [1, 1], [0, 1]],
-            [[1, 0], [1, 1], [1, 0]],
-            [[1, 1, 0], [0, 1, 1]],
-            [[0, 1, 1], [1, 1, 0]],
-            [[1, 1, 1, 1]],
-            [[1], [1], [1], [1]],
-            [[0, 1, 0], [1, 1, 1], [0, 1, 0]]
+            [[1]],                            // 1 blok
+            [[1, 1]],                         // 2 blok horizontal
+            [[1], [1]],                       // 2 blok vertikal
+            [[1, 0], [1, 1]],                 // L kecil
+            [[1, 1], [1, 0]],                 // L kecil terbalik
+            [[1, 1], [0, 1]],                 // L kecil lainnya
+            [[0, 1], [1, 1]],                 // L kecil lainnya
+            [[1, 1, 1]],                      // 3 blok horizontal
+            [[1], [1], [1]],                  // 3 blok vertikal
+            [[1, 1], [1, 1]],                 // Kotak 2x2
+            [[1, 1, 1], [0, 1, 0]],           // T
+            [[0, 1, 0], [1, 1, 1]],           // T terbalik
+            [[1, 1, 0], [0, 1, 1]],           // Z
+            [[0, 1, 1], [1, 1, 0]],           // Z terbalik
+            [[1, 1, 1, 1]],                   // 4 blok horizontal
+            [[1], [1], [1], [1]],             // 4 blok vertikal
+            [[0, 1, 0], [1, 1, 1], [0, 1, 0]] // Plus
         ];
 
         class BlockBlastGame {
@@ -524,10 +514,7 @@
                 this.draggingBlock = null;
                 this.dragOffset = {x: 0, y: 0};
                 this.mousePos = {x: 0, y: 0};
-                this.animationQueue = [];
                 this.isDragging = false;
-                this.dragPreviewCanvas = null;
-                this.dragPreviewCtx = null;
                 
                 // Canvas elements
                 this.boardCanvas = document.getElementById('game-board');
@@ -539,30 +526,13 @@
                 ];
                 this.nextCtxs = this.nextCanvases.map(c => c.getContext('2d'));
                 
-                // Create drag preview canvas
-                this.createDragPreviewCanvas();
-                
                 // Setup
                 this.setupEventListeners();
                 this.generateNextBlocks();
                 this.draw();
-                this.animate();
                 
                 // Handle window resize
                 window.addEventListener('resize', () => this.handleResize());
-            }
-            
-            createDragPreviewCanvas() {
-                this.dragPreviewCanvas = document.createElement('canvas');
-                this.dragPreviewCanvas.className = 'drag-shadow';
-                this.dragPreviewCanvas.style.position = 'fixed';
-                this.dragPreviewCanvas.style.pointerEvents = 'none';
-                this.dragPreviewCanvas.style.display = 'none';
-                this.dragPreviewCanvas.width = 50;
-                this.dragPreviewCanvas.height = 50;
-                
-                document.body.appendChild(this.dragPreviewCanvas);
-                this.dragPreviewCtx = this.dragPreviewCanvas.getContext('2d');
             }
             
             handleResize() {
@@ -575,15 +545,7 @@
             }
             
             setupEventListeners() {
-                // Keyboard controls
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'r' || e.key === 'R') {
-                        this.rotateDraggingBlock();
-                    }
-                });
-                
-                // Button controls
-                document.getElementById('rotate-btn').addEventListener('click', () => this.rotateDraggingBlock());
+                // Button controls - HANYA 2 TOMBOL SEKARANG
                 document.getElementById('hint-btn').addEventListener('click', () => this.showHint());
                 document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
                 document.getElementById('play-again-btn').addEventListener('click', () => this.restartGame());
@@ -630,11 +592,6 @@
                         this.drop(e);
                     }
                 });
-                
-                // Mouse leave game board
-                this.boardCanvas.addEventListener('mouseleave', () => {
-                    this.hideDragPreview();
-                });
             }
             
             generateNextBlocks() {
@@ -674,14 +631,14 @@
                     const offsetX = (canvas.width - blockWidth * cellSize) / 2;
                     const offsetY = (canvas.height - blockHeight * cellSize) / 2;
                     
-                    // Draw simple colored blocks
+                    // Draw colored blocks
                     for (let r = 0; r < blockHeight; r++) {
                         for (let c = 0; c < blockWidth; c++) {
                             if (shape[r][c] === 1) {
                                 const x = offsetX + c * cellSize;
                                 const y = offsetY + r * cellSize;
                                 
-                                // Solid color with simple border
+                                // Solid color
                                 ctx.fillStyle = block.color;
                                 ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
                                 
@@ -705,12 +662,8 @@
                     shape: JSON.parse(JSON.stringify(block.shape)),
                     color: block.color,
                     size: block.size,
-                    originalIndex: blockIndex,
-                    rotation: 0
+                    originalIndex: blockIndex
                 };
-                
-                // Show drag preview
-                this.showDragPreview(block.color, block.shape);
                 
                 const rect = this.nextCanvases[blockIndex].getBoundingClientRect();
                 const clientX = e.clientX || e.touches[0].clientX;
@@ -726,45 +679,11 @@
                 e.preventDefault();
             }
             
-            showDragPreview(color, shape) {
-                this.dragPreviewCanvas.style.display = 'block';
-                
-                // Draw simple preview
-                this.dragPreviewCtx.clearRect(0, 0, 50, 50);
-                this.dragPreviewCtx.fillStyle = color;
-                
-                const blockWidth = shape[0].length;
-                const blockHeight = shape.length;
-                const cellSize = 50 / Math.max(blockWidth, blockHeight);
-                
-                for (let r = 0; r < blockHeight; r++) {
-                    for (let c = 0; c < blockWidth; c++) {
-                        if (shape[r][c] === 1) {
-                            const x = c * cellSize;
-                            const y = r * cellSize;
-                            this.dragPreviewCtx.fillRect(x, y, cellSize - 1, cellSize - 1);
-                            
-                            this.dragPreviewCtx.strokeStyle = '#ffffff';
-                            this.dragPreviewCtx.lineWidth = 1;
-                            this.dragPreviewCtx.strokeRect(x, y, cellSize - 1, cellSize - 1);
-                        }
-                    }
-                }
-            }
-            
-            hideDragPreview() {
-                this.dragPreviewCanvas.style.display = 'none';
-            }
-            
             drag(e) {
                 if (!this.draggingBlock || !this.isDragging) return;
                 
                 const clientX = e.clientX || (e.touches ? e.touches[0].clientX : this.mousePos.x);
                 const clientY = e.clientY || (e.touches ? e.touches[0].clientY : this.mousePos.y);
-                
-                // Move drag preview
-                this.dragPreviewCanvas.style.left = (clientX - 25) + 'px';
-                this.dragPreviewCanvas.style.top = (clientY - 25) + 'px';
                 
                 // Update board preview
                 const boardRect = this.boardCanvas.getBoundingClientRect();
@@ -776,7 +695,7 @@
             }
             
             drawBoardPreview(gridX, gridY) {
-                // Clear the board first
+                // Redraw the board first
                 this.draw();
                 
                 if (!this.draggingBlock) return;
@@ -795,7 +714,7 @@
                 const canPlace = this.canPlaceBlock(shape, adjustedX, adjustedY);
                 
                 // Draw preview on board
-                this.boardCtx.globalAlpha = canPlace ? 0.7 : 0.4;
+                this.boardCtx.globalAlpha = 0.6;
                 
                 for (let r = 0; r < shape.length; r++) {
                     for (let c = 0; c < shape[r].length; c++) {
@@ -833,41 +752,10 @@
                 };
             }
             
-            rotateDraggingBlock() {
-                if (!this.draggingBlock || !this.isDragging) return;
-                
-                const shape = this.draggingBlock.shape;
-                const rows = shape.length;
-                const cols = shape[0].length;
-                const newShape = Array(cols).fill().map(() => Array(rows).fill(0));
-                
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < cols; c++) {
-                        newShape[c][rows - 1 - r] = shape[r][c];
-                    }
-                }
-                
-                this.draggingBlock.shape = newShape;
-                this.draggingBlock.rotation = (this.draggingBlock.rotation + 90) % 360;
-                
-                // Update drag preview
-                this.showDragPreview(this.draggingBlock.color, this.draggingBlock.shape);
-                
-                // Redraw board preview
-                if (this.mousePos.x && this.mousePos.y) {
-                    const boardRect = this.boardCanvas.getBoundingClientRect();
-                    const cellSize = this.boardCanvas.width / 9;
-                    const gridX = Math.floor((this.mousePos.x - boardRect.left) / cellSize);
-                    const gridY = Math.floor((this.mousePos.y - boardRect.top) / cellSize);
-                    this.drawBoardPreview(gridX, gridY);
-                }
-            }
-            
             drop(e) {
                 if (!this.draggingBlock || !this.isDragging) return;
                 
                 this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
-                this.hideDragPreview();
                 
                 if (this.targetPosition && this.targetPosition.valid) {
                     this.placeBlock(
@@ -1015,7 +903,7 @@
                     this.boardCtx.stroke();
                 }
                 
-                // Draw placed blocks - SIMPLE
+                // Draw placed blocks
                 for (let r = 0; r < 9; r++) {
                     for (let c = 0; c < 9; c++) {
                         if (this.grid[r][c] !== 0) {
@@ -1040,6 +928,7 @@
                 const completedRows = [];
                 const completedCols = [];
                 
+                // Check rows
                 for (let r = 0; r < 9; r++) {
                     let rowComplete = true;
                     for (let c = 0; c < 9; c++) {
@@ -1051,6 +940,7 @@
                     if (rowComplete) completedRows.push(r);
                 }
                 
+                // Check columns
                 for (let c = 0; c < 9; c++) {
                     let colComplete = true;
                     for (let r = 0; r < 9; r++) {
@@ -1063,14 +953,6 @@
                 }
                 
                 if (completedRows.length > 0 || completedCols.length > 0) {
-                    // Simple line clear animation
-                    this.animationQueue.push({
-                        type: 'lineClear',
-                        rows: completedRows,
-                        cols: completedCols,
-                        duration: 20
-                    });
-                    
                     // Calculate score
                     const totalLines = completedRows.length + completedCols.length;
                     let lineScore = totalLines * 100 * this.level;
@@ -1095,23 +977,21 @@
                         this.levelUp();
                     }
                     
-                    // Clear lines after animation
-                    setTimeout(() => {
-                        completedRows.forEach(r => {
-                            for (let c = 0; c < 9; c++) {
-                                this.grid[r][c] = 0;
-                            }
-                        });
-                        
-                        completedCols.forEach(c => {
-                            for (let r = 0; r < 9; r++) {
-                                this.grid[r][c] = 0;
-                            }
-                        });
-                        
-                        this.updateUI();
-                        this.draw();
-                    }, 400);
+                    // Clear lines immediately (without animation)
+                    completedRows.forEach(r => {
+                        for (let c = 0; c < 9; c++) {
+                            this.grid[r][c] = 0;
+                        }
+                    });
+                    
+                    completedCols.forEach(c => {
+                        for (let r = 0; r < 9; r++) {
+                            this.grid[r][c] = 0;
+                        }
+                    });
+                    
+                    this.updateUI();
+                    this.draw();
                 }
             }
             
@@ -1130,51 +1010,50 @@
                     difficultyText.textContent = "Sulit";
                     difficultyText.style.color = "#f44336";
                 }
-                
-                // Simple level up animation
-                this.animationQueue.push({
-                    type: 'levelUp',
-                    level: this.level,
-                    duration: 40
-                });
             }
             
             showHint() {
-                // Simple hint: just show a message
-                alert('Cari posisi kosong yang sesuai dengan bentuk blok!');
-            }
-            
-            drawAnimations() {
-                for (let i = this.animationQueue.length - 1; i >= 0; i--) {
-                    const animation = this.animationQueue[i];
+                // Simple hint system
+                for (let block of this.currentBlocks) {
+                    const shape = block.shape;
                     
-                    if (animation.type === 'lineClear') {
-                        this.drawLineClearAnimation(animation);
-                        animation.duration--;
-                        
-                        if (animation.duration <= 0) {
-                            this.animationQueue.splice(i, 1);
+                    for (let y = 0; y <= 9 - shape.length; y++) {
+                        for (let x = 0; x <= 9 - shape[0].length; x++) {
+                            if (this.canPlaceBlock(shape, x, y)) {
+                                // Show the valid position briefly
+                                this.drawHintPreview(x, y, shape);
+                                return;
+                            }
                         }
                     }
                 }
+                
+                alert('Tidak ada posisi yang tersedia untuk blok saat ini!');
             }
             
-            drawLineClearAnimation(animation) {
+            drawHintPreview(x, y, shape) {
                 const cellSize = this.boardCanvas.width / 9;
-                const alpha = animation.duration % 10 < 5 ? 0.6 : 0.3;
                 
-                this.boardCtx.globalAlpha = alpha;
-                this.boardCtx.fillStyle = "#69f0ae";
+                // Draw hint as yellow overlay
+                this.boardCtx.globalAlpha = 0.5;
+                this.boardCtx.fillStyle = '#FFEB3B';
                 
-                animation.rows.forEach(row => {
-                    this.boardCtx.fillRect(0, row * cellSize, this.boardCanvas.width, cellSize);
-                });
-                
-                animation.cols.forEach(col => {
-                    this.boardCtx.fillRect(col * cellSize, 0, cellSize, this.boardCanvas.height);
-                });
+                for (let r = 0; r < shape.length; r++) {
+                    for (let c = 0; c < shape[r].length; c++) {
+                        if (shape[r][c] === 1) {
+                            const cellX = (x + c) * cellSize;
+                            const cellY = (y + r) * cellSize;
+                            this.boardCtx.fillRect(cellX + 1, cellY + 1, cellSize - 2, cellSize - 2);
+                        }
+                    }
+                }
                 
                 this.boardCtx.globalAlpha = 1.0;
+                
+                // Remove hint after 1 second
+                setTimeout(() => {
+                    this.draw();
+                }, 1000);
             }
             
             hasValidMoves() {
@@ -1210,10 +1089,7 @@
                 this.gameOver = false;
                 this.currentBlocks = [];
                 this.draggingBlock = null;
-                this.animationQueue = [];
                 this.isDragging = false;
-                
-                this.hideDragPreview();
                 
                 document.getElementById('difficulty-text').textContent = "Mudah";
                 document.getElementById('difficulty-text').style.color = "#4caf50";
@@ -1230,11 +1106,6 @@
                 document.getElementById('level').textContent = this.level;
                 document.getElementById('lines-cleared').textContent = this.linesCleared;
                 document.getElementById('blocks-used').textContent = this.blocksUsed;
-            }
-            
-            animate() {
-                this.drawAnimations();
-                requestAnimationFrame(() => this.animate());
             }
         }
 
