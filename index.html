@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Block Barrr - Puzzle Game</title>
+    <title>Block BARRR - Puzzle Game</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #2d1950;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #ffffff;
             min-height: 100vh;
             padding: 20px;
@@ -27,35 +27,43 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
+            padding-top: 10px;
         }
 
         h1 {
-            font-size: 3rem;
-            color: #ff6b9d;
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 0 #ff4081;
+            letter-spacing: 1px;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            color: #b39ddb;
+            font-size: 1.1rem;
+            color: #a0a0c0;
+            font-weight: 300;
         }
 
         .game-area {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        /* Panel Kiri: Informasi Game */
+        /* Panel Informasi */
         .game-info {
-            background: #3f2b63;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
             padding: 25px;
             width: 280px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .info-section {
@@ -63,238 +71,314 @@
         }
 
         .info-section h2 {
-            color: #ff8a00;
+            color: #00dbde;
             font-size: 1.4rem;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ff8a00;
+            font-weight: 600;
         }
 
         .score-display {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #00e5ff;
+            font-size: 3.8rem;
+            font-weight: 800;
+            color: #ffffff;
             text-align: center;
-            margin: 20px 0;
+            margin: 25px 0;
+            text-shadow: 0 0 20px rgba(0, 219, 222, 0.5);
         }
 
         .stats {
-            margin: 15px 0;
+            margin: 20px 0;
         }
 
         .stat-row {
             display: flex;
             justify-content: space-between;
-            margin: 10px 0;
-            padding: 8px 0;
+            margin: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .stat-label {
-            color: #b39ddb;
+            color: #b8b8d0;
+            font-weight: 400;
         }
 
         .stat-value {
             color: #69f0ae;
-            font-weight: bold;
-        }
-
-        .difficulty {
-            margin-top: 20px;
-        }
-
-        .difficulty-text {
-            text-align: center;
+            font-weight: 600;
             font-size: 1.1rem;
-            color: #ff8a00;
-            margin-bottom: 5px;
         }
 
         /* Game Board */
         .game-board-container {
-            background: #3f2b63;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             position: relative;
+            min-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         #game-board {
-            background: #4a3775;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
             display: block;
-            border: 2px solid #9d4edd;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            width: 480px !important;
+            height: 480px !important;
         }
 
-        /* Panel Kanan: Blok Berikutnya */
+        /* Blok Berikutnya */
         .next-blocks-container {
-            background: #3f2b63;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
             padding: 25px;
             width: 280px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .next-blocks-container h2 {
-            color: #00e5ff;
+            color: #fc00ff;
             font-size: 1.4rem;
             margin-bottom: 25px;
             text-align: center;
+            font-weight: 600;
         }
 
         .next-blocks {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
             align-items: center;
+            width: 100%;
         }
 
         .next-block-canvas {
-            background: #4a3775;
-            border-radius: 10px;
-            border: 2px solid #00e5ff;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 3px solid rgba(255, 255, 255, 0.15);
             cursor: grab;
-            transition: transform 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 140px !important;
+            height: 140px !important;
         }
 
         .next-block-canvas:hover {
-            transform: scale(1.05);
-            border-color: #ff8a00;
+            transform: scale(1.08);
+            border-color: #00dbde;
+            box-shadow: 0 0 25px rgba(0, 219, 222, 0.4);
         }
 
         .next-block-canvas.dragging {
-            opacity: 0.5;
+            opacity: 0.2; /* HANYA FADE, TIDAK IKUT GERAK */
         }
 
-        /* Panel Kontrol */
+        /* Kontrol */
         .controls-container {
-            background: #3f2b63;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
             padding: 25px;
             margin-top: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .controls-container h2 {
-            color: #ff8a00;
+            color: #00dbde;
             font-size: 1.4rem;
             margin-bottom: 20px;
             text-align: center;
+            font-weight: 600;
         }
 
         .controls-grid {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         button {
-            background: linear-gradient(135deg, #ff4081, #9d4edd);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 18px 25px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            padding: 20px 35px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            min-width: 200px;
+            gap: 15px;
+            min-width: 250px;
+            letter-spacing: 0.5px;
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(157, 78, 221, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
 
         button:active {
-            transform: translateY(0);
+            transform: translateY(-2px);
         }
 
         #restart-btn {
-            background: linear-gradient(135deg, #00e5ff, #00b8d4);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        #restart-btn:hover {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            box-shadow: 0 12px 30px rgba(245, 87, 108, 0.4);
         }
 
         #hint-btn {
-            background: linear-gradient(135deg, #ff8a00, #ff5252);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
 
-        /* Game Over Overlay */
+        #hint-btn:hover {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.4);
+        }
+
+        /* Game Over */
         .game-over {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-radius: 15px;
+            border-radius: 16px;
             z-index: 100;
+            backdrop-filter: blur(5px);
         }
 
         .game-over h2 {
-            font-size: 3rem;
-            color: #ff5252;
-            margin-bottom: 30px;
+            font-size: 3.5rem;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 35px;
+            font-weight: 800;
         }
 
         .game-over p {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #b39ddb;
+            font-size: 1.6rem;
+            margin-bottom: 30px;
+            color: #b8b8d0;
+            font-weight: 300;
         }
 
         .highlight {
-            color: #00e5ff;
-            font-weight: bold;
+            color: #69f0ae;
+            font-weight: 600;
+            font-size: 1.8rem;
         }
 
-        /* Instructions */
+        /* Instruksi */
         .instructions {
-            background: #3f2b63;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
             padding: 25px;
             margin-top: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .instructions h2 {
-            color: #ff8a00;
+            color: #fc00ff;
             font-size: 1.4rem;
             margin-bottom: 20px;
             text-align: center;
+            font-weight: 600;
         }
 
         .instruction-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
             list-style: none;
         }
 
         .instruction-list li {
-            background: #4a3775;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #00e5ff;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #00dbde;
+            font-weight: 300;
+            line-height: 1.6;
+            font-size: 1.05rem;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
+        /* HANYA BAYANGAN SAAT DRAG - BLOK ASLI TIDAK IKUT */
+        .drag-shadow {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            transition: transform 0.05s linear;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
+            width: 100px !important;
+            height: 100px !important;
+            /* TIDAK ADA BLOK ASLI YANG IKUT */
+        }
+
+        /* Score Popup */
+        .score-popup {
+            position: absolute;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffeb3b;
+            z-index: 5;
+            pointer-events: none;
+            animation: popup 1s ease-out;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.6);
+        }
+
+        @keyframes popup {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            50% { transform: translateY(-40px) scale(1.3); opacity: 1; }
+            100% { transform: translateY(-80px) scale(0.9); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
             .game-area {
                 flex-direction: column;
                 align-items: center;
             }
             
+            .game-board-container {
+                order: 1;
+                min-width: auto;
+                width: 100%;
+                max-width: 500px;
+            }
+            
             .game-info,
             .next-blocks-container {
+                order: 2;
                 width: 100%;
                 max-width: 500px;
             }
@@ -302,44 +386,55 @@
             .next-blocks {
                 flex-direction: row;
                 justify-content: center;
+                gap: 30px;
             }
         }
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 2.2rem;
+                font-size: 2.5rem;
             }
             
             #game-board {
-                width: 350px;
-                height: 350px;
+                width: 380px !important;
+                height: 380px !important;
+            }
+            
+            .game-board-container {
+                padding: 20px;
             }
             
             .next-block-canvas {
-                width: 90px;
-                height: 90px;
+                width: 120px !important;
+                height: 120px !important;
             }
             
             button {
-                padding: 15px;
-                font-size: 1rem;
-                min-width: 150px;
+                padding: 18px 30px;
+                font-size: 1.1rem;
+                min-width: 220px;
             }
             
             .controls-grid {
                 flex-direction: column;
                 align-items: center;
+                gap: 20px;
+            }
+            
+            .drag-shadow {
+                width: 80px !important;
+                height: 80px !important;
             }
         }
 
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 15px;
             }
             
             #game-board {
-                width: 300px;
-                height: 300px;
+                width: 320px !important;
+                height: 320px !important;
             }
             
             .game-info,
@@ -350,34 +445,26 @@
             }
             
             .score-display {
-                font-size: 2.8rem;
+                font-size: 3.2rem;
             }
-        }
-
-        /* Drag preview */
-        .drag-preview {
-            position: absolute;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0.7;
-            transition: none;
-        }
-
-        /* Score popup */
-        .score-popup {
-            position: absolute;
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #69f0ae;
-            z-index: 5;
-            pointer-events: none;
-            animation: popup 1s ease-out;
-        }
-
-        @keyframes popup {
-            0% { transform: translateY(0) scale(0.8); opacity: 0; }
-            50% { transform: translateY(-30px) scale(1.1); opacity: 1; }
-            100% { transform: translateY(-60px) scale(0.9); opacity: 0; }
+            
+            .next-blocks {
+                gap: 20px;
+            }
+            
+            .next-block-canvas {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            
+            button {
+                padding: 16px 25px;
+                min-width: 200px;
+            }
+            
+            .instruction-list {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -385,11 +472,11 @@
     <div class="container">
         <div class="header">
             <h1>BLOCK BARRR</h1>
-            <p class="subtitle">Bisa maen nya ga lu?</p>
+            <p class="subtitle">Tempatkan blok warna-warni, ledakkan baris & kolom, raih skor tertinggi!</p>
         </div>
 
         <div class="game-area">
-            <!-- Panel Kiri: Informasi Game -->
+            <!-- Panel Informasi -->
             <div class="game-info">
                 <div class="info-section">
                     <h2>SKOR</h2>
@@ -397,109 +484,125 @@
                     
                     <div class="stats">
                         <div class="stat-row">
-                            <span class="stat-label">🎮 Level:</span>
+                            <span class="stat-label">Level:</span>
                             <span class="stat-value" id="level">1</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">🧹 Baris/Kolom:</span>
+                            <span class="stat-label">Baris/Kolom:</span>
                             <span class="stat-value" id="lines-cleared">0</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">🧩 Blok Digunakan:</span>
+                            <span class="stat-label">Blok Digunakan:</span>
                             <span class="stat-value" id="blocks-used">0</span>
                         </div>
                     </div>
                     
                     <div class="difficulty">
                         <div class="stat-row">
-                            <span class="stat-label">🎯 Kesulitan:</span>
+                            <span class="stat-label">Kesulitan:</span>
                             <span class="stat-value" id="difficulty-text">Mudah</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tengah: Game Board -->
+            <!-- Game Board -->
             <div class="game-board-container">
-                <canvas id="game-board" width="450" height="450"></canvas>
+                <canvas id="game-board" width="480" height="480"></canvas>
                 <div id="game-over" class="game-over">
                     <h2>GAME OVER!</h2>
                     <p>Skor Akhir: <span id="final-score" class="highlight">0</span></p>
                     <p>Baris/Kolom: <span id="final-lines" class="highlight">0</span></p>
-                    <button id="play-again-btn">🎮 MAIN LAGI</button>
+                    <button id="play-again-btn">🎮 Main Lagi</button>
                 </div>
             </div>
 
-            <!-- Kanan: Blok Berikutnya -->
+            <!-- Blok Berikutnya -->
             <div class="next-blocks-container">
-                <h2>BLOK BERIKUTNYA</h2>
+               
                 <div class="next-blocks">
-                    <canvas id="next-block-1" width="100" height="100" class="next-block-canvas"></canvas>
-                    <canvas id="next-block-2" width="100" height="100" class="next-block-canvas"></canvas>
-                    <canvas id="next-block-3" width="100" height="100" class="next-block-canvas"></canvas>
+                    <canvas id="next-block-1" width="140" height="140" class="next-block-canvas"></canvas>
+                    <canvas id="next-block-2" width="140" height="140" class="next-block-canvas"></canvas>
+                    <canvas id="next-block-3" width="140" height="140" class="next-block-canvas"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Panel Kontrol - HANYA 2 TOMBOL SEKARANG -->
+        <!-- Kontrol -->
         <div class="controls-container">
             <h2>KONTROL</h2>
             <div class="controls-grid">
                 <button id="hint-btn">
-                    <span style="font-size: 1.2em;">🔍</span>
+                    <span style="font-size: 1.4em;">💡</span>
                     PETUNJUK
                 </button>
                 <button id="restart-btn">
-                    <span style="font-size: 1.2em;">🔄</span>
+                    <span style="font-size: 1.4em;">🔄</span>
                     MULAI ULANG
                 </button>
             </div>
         </div>
 
-        <!-- Panel Instruksi -->
+        <!-- Instruksi -->
         <div class="instructions">
             <h2>CARA BERMAIN</h2>
             <ul class="instruction-list">
-                <li><strong>Serius lu main ginian aja liat petunjuk???</strong></li>
                 <li><strong>Seret dan lepaskan</strong> blok dari panel kanan ke papan game</li>
-                <li><strong>Bayangan hijau</strong> menunjukkan posisi valid</li>
+                <li><strong>Bayangan hijau</strong> menunjukkan posisi valid untuk penempatan</li>
                 <li><strong>Bayangan merah</strong> menunjukkan posisi tidak valid</li>
-                <li><strong>Isi baris atau kolom</strong> penuh untuk menghapusnya dan dapatkan skor</li>
-                <li><strong>Game over</strong> ketika tidak ada ruang tersisa</li>
+                <li><strong>Isi baris atau kolom penuh</strong> untuk menghapusnya dan dapatkan skor</li>
+                <li><strong>Blok besar = skor besar!</strong> Gunakan strategi untuk skor tinggi</li>
+                <li><strong>Game over</strong> ketika tidak ada ruang tersisa untuk blok</li>
             </ul>
         </div>
     </div>
 
     <script>
-        // Warna-warni yang menarik
+        // Warna-warni blok yang sangat menarik dengan gradien
         const BLOCK_COLORS = [
-            '#FF5252', '#FF4081', '#E91E63',  // Merah dan Pink
-            '#9C27B0', '#673AB7', '#3F51B5',  // Ungu dan Violet
-            '#2196F3', '#03A9F4', '#00BCD4',  // Biru dan Cyan
-            '#4CAF50', '#8BC34A', '#CDDC39',  // Hijau dan Lime
-            '#FFEB3B', '#FFC107', '#FF9800',  // Kuning dan Amber
-            '#FF5722', '#795548'              // Oranye
+            // Vibrant Gradients
+            'linear-gradient(135deg, #FF0080, #FF8C00)',
+            'linear-gradient(135deg, #00DBDE, #FC00FF)',
+            'linear-gradient(135deg, #FAD961, #F76B1C)',
+            'linear-gradient(135deg, #92FFC0, #002661)',
+            'linear-gradient(135deg, #FFEC21, #FF4E50)',
+            'linear-gradient(135deg, #FF5F6D, #FFC371)',
+            'linear-gradient(135deg, #42E695, #3BB2B8)',
+            'linear-gradient(135deg, #C471F5, #FF416C)',
+            'linear-gradient(135deg, #6A11CB, #2575FC)',
+            'linear-gradient(135deg, #FFD26F, #3677FF)',
+            'linear-gradient(135deg, #76B852, #8DC26F)',
+            'linear-gradient(135deg, #4A00E0, #8E2DE2)',
+            'linear-gradient(135deg, #F5515F, #A1051D)',
+            'linear-gradient(135deg, #00C9FF, #92FE9D)',
+            'linear-gradient(135deg, #FD746C, #FF9068)',
+            'linear-gradient(135deg, #834D9B, #D04ED6)'
         ];
 
-        // Bentuk-bentuk blok
+        // Bentuk blok yang menarik
         const BLOCK_SHAPES = [
-            [[1]],                            // 1 blok
-            [[1, 1]],                         // 2 blok horizontal
-            [[1], [1]],                       // 2 blok vertikal
-            [[1, 0], [1, 1]],                 // L kecil
-            [[1, 1], [1, 0]],                 // L kecil terbalik
-            [[1, 1], [0, 1]],                 // L kecil lainnya
-            [[0, 1], [1, 1]],                 // L kecil lainnya
-            [[1, 1, 1]],                      // 3 blok horizontal
-            [[1], [1], [1]],                  // 3 blok vertikal
-            [[1, 1], [1, 1]],                 // Kotak 2x2
-            [[1, 1, 1], [0, 1, 0]],           // T
-            [[0, 1, 0], [1, 1, 1]],           // T terbalik
-            [[1, 1, 0], [0, 1, 1]],           // Z
-            [[0, 1, 1], [1, 1, 0]],           // Z terbalik
-            [[1, 1, 1, 1]],                   // 4 blok horizontal
-            [[1], [1], [1], [1]],             // 4 blok vertikal
-            [[0, 1, 0], [1, 1, 1], [0, 1, 0]] // Plus
+            [[1]],
+            [[1, 1]],
+            [[1], [1]],
+            [[1, 0], [1, 1]],
+            [[1, 1], [1, 0]],
+            [[1, 1], [0, 1]],
+            [[0, 1], [1, 1]],
+            [[1, 1, 1]],
+            [[1], [1], [1]],
+            [[1, 1], [1, 1]],
+            [[1, 1, 1], [0, 1, 0]],
+            [[0, 1, 0], [1, 1, 1]],
+            [[0, 1], [1, 1], [0, 1]],
+            [[1, 0], [1, 1], [1, 0]],
+            [[1, 1, 0], [0, 1, 1]],
+            [[0, 1, 1], [1, 1, 0]],
+            [[1, 1, 1, 1]],
+            [[1], [1], [1], [1]],
+            [[0, 1, 0], [1, 1, 1], [0, 1, 0]],
+            [[1, 1, 1, 1, 1]],
+            [[1, 1, 0, 0], [0, 1, 1, 1]],
+            [[1, 0, 0], [1, 1, 1], [0, 0, 1]]
         ];
 
         class BlockBlastGame {
@@ -512,9 +615,12 @@
                 this.gameOver = false;
                 this.currentBlocks = [];
                 this.draggingBlock = null;
-                this.dragOffset = {x: 0, y: 0};
-                this.mousePos = {x: 0, y: 0};
+                this.lastMousePos = {x: 0, y: 0};
                 this.isDragging = false;
+                this.dragShadowCanvas = null;
+                this.dragShadowCtx = null;
+                this.lastAnimationTime = 0;
+                this.animationId = null;
                 
                 // Canvas elements
                 this.boardCanvas = document.getElementById('game-board');
@@ -529,53 +635,63 @@
                 // Setup
                 this.setupEventListeners();
                 this.generateNextBlocks();
+                this.createDragShadow();
                 this.draw();
+                this.startAnimationLoop();
                 
                 // Handle window resize
                 window.addEventListener('resize', () => this.handleResize());
             }
             
-            handleResize() {
-                // Adjust canvas size for mobile
-                if (window.innerWidth <= 768) {
-                    const size = Math.min(window.innerWidth - 40, 350);
-                    this.boardCanvas.width = size;
-                    this.boardCanvas.height = size;
-                }
+            createDragShadow() {
+                // HANYA BAYANGAN, TIDAK ADA BLOK ASLI YANG IKUT
+                this.dragShadowCanvas = document.createElement('canvas');
+                this.dragShadowCanvas.className = 'drag-shadow';
+                this.dragShadowCanvas.style.position = 'fixed';
+                this.dragShadowCanvas.style.pointerEvents = 'none';
+                this.dragShadowCanvas.style.display = 'none';
+                this.dragShadowCanvas.width = 100;
+                this.dragShadowCanvas.height = 100;
+                
+                document.body.appendChild(this.dragShadowCanvas);
+                this.dragShadowCtx = this.dragShadowCanvas.getContext('2d');
             }
             
             setupEventListeners() {
-                // Button controls - HANYA 2 TOMBOL SEKARANG
+                // Button controls
                 document.getElementById('hint-btn').addEventListener('click', () => this.showHint());
                 document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
                 document.getElementById('play-again-btn').addEventListener('click', () => this.restartGame());
                 
-                // Drag and drop
+                // Drag and drop - HANYA BAYANGAN SAAT DRAG
                 this.nextCanvases.forEach((canvas, index) => {
                     canvas.addEventListener('mousedown', (e) => this.startDrag(e, index));
                     canvas.addEventListener('touchstart', (e) => {
                         e.preventDefault();
                         this.startDrag(e, index);
-                    });
+                    }, { passive: false });
+                    
+                    canvas.style.touchAction = 'none';
                 });
                 
-                // Mouse move for dragging
+                // Mouse move - HANYA GERAKKAN BAYANGAN
                 document.addEventListener('mousemove', (e) => {
-                    this.mousePos.x = e.clientX;
-                    this.mousePos.y = e.clientY;
+                    this.lastMousePos.x = e.clientX;
+                    this.lastMousePos.y = e.clientY;
                     if (this.isDragging) {
-                        this.drag(e);
+                        e.preventDefault();
+                        this.updateDragShadowPosition(e.clientX, e.clientY);
                     }
                 });
                 
-                // Touch move for dragging
+                // Touch move - HANYA GERAKKAN BAYANGAN
                 document.addEventListener('touchmove', (e) => {
                     if (!this.isDragging) return;
                     e.preventDefault();
                     const touch = e.touches[0];
-                    this.mousePos.x = touch.clientX;
-                    this.mousePos.y = touch.clientY;
-                    this.drag(e);
+                    this.lastMousePos.x = touch.clientX;
+                    this.lastMousePos.y = touch.clientY;
+                    this.updateDragShadowPosition(touch.clientX, touch.clientY);
                 }, { passive: false });
                 
                 // Mouse up for dropping
@@ -592,6 +708,55 @@
                         this.drop(e);
                     }
                 });
+                
+                // Cancel drag jika mouse keluar window
+                document.addEventListener('mouseleave', () => {
+                    if (this.isDragging) {
+                        this.cancelDrag();
+                    }
+                });
+            }
+            
+            startAnimationLoop() {
+                const animate = (timestamp) => {
+                    if (this.isDragging && this.draggingBlock) {
+                        this.updateDragShadow();
+                    }
+                    this.animationId = requestAnimationFrame(animate);
+                };
+                this.animationId = requestAnimationFrame(animate);
+            }
+            
+            updateDragShadowPosition(clientX, clientY) {
+                // Update posisi bayangan saja
+                const shadowSize = 100;
+                const targetX = clientX - shadowSize / 2;
+                const targetY = clientY - shadowSize / 2;
+                
+                if (this.dragShadowCanvas) {
+                    const currentX = parseFloat(this.dragShadowCanvas.style.left) || targetX;
+                    const currentY = parseFloat(this.dragShadowCanvas.style.top) || targetY;
+                    
+                    // Smooth interpolation untuk bayangan
+                    const lerpFactor = 0.25;
+                    const newX = currentX + (targetX - currentX) * lerpFactor;
+                    const newY = currentY + (targetY - currentY) * lerpFactor;
+                    
+                    this.dragShadowCanvas.style.left = `${newX}px`;
+                    this.dragShadowCanvas.style.top = `${newY}px`;
+                }
+                
+                // Update preview di board (tidak ada blok asli yang ikut)
+                const now = Date.now();
+                if (now - this.lastAnimationTime > 16) {
+                    this.lastAnimationTime = now;
+                    const boardRect = this.boardCanvas.getBoundingClientRect();
+                    const cellSize = this.boardCanvas.width / 9;
+                    const gridX = Math.floor((clientX - boardRect.left) / cellSize);
+                    const gridY = Math.floor((clientY - boardRect.top) / cellSize);
+                    
+                    this.drawBoardPreview(gridX, gridY);
+                }
             }
             
             generateNextBlocks() {
@@ -627,25 +792,44 @@
                     const shape = block.shape;
                     const blockWidth = shape[0].length;
                     const blockHeight = shape.length;
-                    const cellSize = 30;
+                    const cellSize = 45;
                     const offsetX = (canvas.width - blockWidth * cellSize) / 2;
                     const offsetY = (canvas.height - blockHeight * cellSize) / 2;
                     
-                    // Draw colored blocks
+                    // Draw blocks di panel next blocks saja
                     for (let r = 0; r < blockHeight; r++) {
                         for (let c = 0; c < blockWidth; c++) {
                             if (shape[r][c] === 1) {
                                 const x = offsetX + c * cellSize;
                                 const y = offsetY + r * cellSize;
                                 
-                                // Solid color
-                                ctx.fillStyle = block.color;
-                                ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
+                                const gradient = ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
+                                if (block.color.includes('gradient')) {
+                                    const colors = block.color.match(/#[0-9A-F]{6}/gi);
+                                    if (colors) {
+                                        gradient.addColorStop(0, colors[0]);
+                                        gradient.addColorStop(1, colors[1]);
+                                    }
+                                } else {
+                                    ctx.fillStyle = block.color;
+                                }
                                 
-                                // Simple border
-                                ctx.strokeStyle = '#ffffff';
-                                ctx.lineWidth = 1;
-                                ctx.strokeRect(x, y, cellSize - 2, cellSize - 2);
+                                ctx.fillStyle = gradient;
+                                
+                                ctx.beginPath();
+                                ctx.roundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 8);
+                                ctx.fill();
+                                
+                                ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                                ctx.beginPath();
+                                ctx.roundRect(x + 6, y + 6, cellSize - 12, cellSize - 12, 6);
+                                ctx.fill();
+                                
+                                ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+                                ctx.lineWidth = 3;
+                                ctx.beginPath();
+                                ctx.roundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 8);
+                                ctx.stroke();
                             }
                         }
                     }
@@ -665,38 +849,107 @@
                     originalIndex: blockIndex
                 };
                 
-                const rect = this.nextCanvases[blockIndex].getBoundingClientRect();
+                // HANYA TAMPILKAN BAYANGAN, BLOK ASLI TETAP DI TEMPAT
+                this.showDragShadow(block.color, block.shape);
+                
                 const clientX = e.clientX || e.touches[0].clientX;
                 const clientY = e.clientY || e.touches[0].clientY;
                 
-                this.dragOffset = {
-                    x: clientX - rect.left,
-                    y: clientY - rect.top
-                };
-                
                 this.isDragging = true;
                 this.nextCanvases[blockIndex].classList.add('dragging');
+                
+                // Posisi awal bayangan - DI TENGAH KURSOR
+                const shadowSize = 100;
+                this.dragShadowCanvas.style.left = `${clientX - shadowSize / 2}px`;
+                this.dragShadowCanvas.style.top = `${clientY - shadowSize / 2}px`;
+                
                 e.preventDefault();
             }
             
-            drag(e) {
-                if (!this.draggingBlock || !this.isDragging) return;
+            showDragShadow(color, shape) {
+                // HANYA BAYANGAN YANG DITAMPILKAN
+                this.dragShadowCanvas.style.display = 'block';
+                this.dragShadowCtx.clearRect(0, 0, 100, 100);
                 
-                const clientX = e.clientX || (e.touches ? e.touches[0].clientX : this.mousePos.x);
-                const clientY = e.clientY || (e.touches ? e.touches[0].clientY : this.mousePos.y);
+                const blockWidth = shape[0].length;
+                const blockHeight = shape.length;
+                const cellSize = 100 / Math.max(blockWidth, blockHeight, 3);
                 
-                // Update board preview
-                const boardRect = this.boardCanvas.getBoundingClientRect();
-                const cellSize = this.boardCanvas.width / 9;
-                const gridX = Math.floor((clientX - boardRect.left) / cellSize);
-                const gridY = Math.floor((clientY - boardRect.top) / cellSize);
+                for (let r = 0; r < blockHeight; r++) {
+                    for (let c = 0; c < blockWidth; c++) {
+                        if (shape[r][c] === 1) {
+                            const x = c * cellSize;
+                            const y = r * cellSize;
+                            
+                            // Bayangan dengan opacity
+                            const gradient = this.dragShadowCtx.createLinearGradient(x, y, x + cellSize, y + cellSize);
+                            if (color.includes('gradient')) {
+                                const colors = color.match(/#[0-9A-F]{6}/gi);
+                                if (colors) {
+                                    gradient.addColorStop(0, colors[0] + 'CC'); // Tambah opacity
+                                    gradient.addColorStop(1, colors[1] + 'CC');
+                                }
+                            } else {
+                                gradient.addColorStop(0, color + 'CC');
+                                gradient.addColorStop(1, color + 'CC');
+                            }
+                            
+                            this.dragShadowCtx.fillStyle = gradient;
+                            this.dragShadowCtx.beginPath();
+                            this.dragShadowCtx.roundRect(x + 1, y + 1, cellSize - 2, cellSize - 2, 6);
+                            this.dragShadowCtx.fill();
+                            
+                            // Border bayangan
+                            this.dragShadowCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                            this.dragShadowCtx.lineWidth = 2;
+                            this.dragShadowCtx.beginPath();
+                            this.dragShadowCtx.roundRect(x + 1, y + 1, cellSize - 2, cellSize - 2, 6);
+                            this.dragShadowCtx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            updateDragShadow() {
+                if (!this.isDragging || !this.dragShadowCanvas) return;
                 
-                this.drawBoardPreview(gridX, gridY);
+                // Update posisi bayangan saja
+                const currentX = parseFloat(this.dragShadowCanvas.style.left);
+                const currentY = parseFloat(this.dragShadowCanvas.style.top);
+                
+                if (!isNaN(currentX) && !isNaN(currentY)) {
+                    const shadowSize = 100;
+                    const targetX = this.lastMousePos.x - shadowSize / 2;
+                    const targetY = this.lastMousePos.y - shadowSize / 2;
+                    
+                    const lerpFactor = 0.2;
+                    const newX = currentX + (targetX - currentX) * lerpFactor;
+                    const newY = currentY + (targetY - currentY) * lerpFactor;
+                    
+                    this.dragShadowCanvas.style.left = `${newX}px`;
+                    this.dragShadowCanvas.style.top = `${newY}px`;
+                }
+            }
+            
+            hideDragShadow() {
+                if (this.dragShadowCanvas) {
+                    this.dragShadowCanvas.style.display = 'none';
+                }
+            }
+            
+            cancelDrag() {
+                if (this.isDragging && this.draggingBlock) {
+                    this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
+                    this.hideDragShadow();
+                    this.draggingBlock = null;
+                    this.isDragging = false;
+                    this.draw();
+                }
             }
             
             drawBoardPreview(gridX, gridY) {
-                // Redraw the board first
-                this.draw();
+                // HANYA PREVIEW DI BOARD, TIDAK ADA BLOK ASLI YANG IKUT
+                this.drawStaticBoard();
                 
                 if (!this.draggingBlock) return;
                 
@@ -705,7 +958,7 @@
                 let adjustedX = gridX;
                 let adjustedY = gridY;
                 
-                // Adjust position to fit in grid
+                // Adjust position
                 if (adjustedX + shape[0].length > 9) adjustedX = 9 - shape[0].length;
                 if (adjustedY + shape.length > 9) adjustedY = 9 - shape.length;
                 if (adjustedX < 0) adjustedX = 0;
@@ -713,8 +966,8 @@
                 
                 const canPlace = this.canPlaceBlock(shape, adjustedX, adjustedY);
                 
-                // Draw preview on board
-                this.boardCtx.globalAlpha = 0.6;
+                // Draw preview di board saja (bayangan)
+                this.boardCtx.globalAlpha = 0.7;
                 
                 for (let r = 0; r < shape.length; r++) {
                     for (let c = 0; c < shape[r].length; c++) {
@@ -723,22 +976,44 @@
                             const y = adjustedY + r;
                             
                             if (x >= 0 && x < 9 && y >= 0 && y < 9) {
-                                this.boardCtx.fillStyle = canPlace ? this.draggingBlock.color : '#FF5252';
-                                this.boardCtx.fillRect(
-                                    x * cellSize + 1, 
-                                    y * cellSize + 1, 
-                                    cellSize - 2, 
-                                    cellSize - 2
+                                const gradient = this.boardCtx.createLinearGradient(
+                                    x * cellSize, y * cellSize,
+                                    (x + 1) * cellSize, (y + 1) * cellSize
                                 );
                                 
-                                this.boardCtx.strokeStyle = canPlace ? '#ffffff' : '#ff0000';
-                                this.boardCtx.lineWidth = 2;
-                                this.boardCtx.strokeRect(
-                                    x * cellSize + 1, 
-                                    y * cellSize + 1, 
-                                    cellSize - 2, 
-                                    cellSize - 2
+                                if (this.draggingBlock.color.includes('gradient')) {
+                                    const colors = this.draggingBlock.color.match(/#[0-9A-F]{6}/gi);
+                                    if (colors) {
+                                        gradient.addColorStop(0, canPlace ? colors[0] + 'AA' : '#FF5252AA');
+                                        gradient.addColorStop(1, canPlace ? colors[1] + 'AA' : '#FF8A80AA');
+                                    }
+                                } else {
+                                    gradient.addColorStop(0, canPlace ? this.draggingBlock.color + 'AA' : '#FF5252AA');
+                                    gradient.addColorStop(1, canPlace ? this.draggingBlock.color + 'AA' : '#FF8A80AA');
+                                }
+                                
+                                this.boardCtx.fillStyle = gradient;
+                                this.boardCtx.beginPath();
+                                this.boardCtx.roundRect(
+                                    x * cellSize + 3, 
+                                    y * cellSize + 3, 
+                                    cellSize - 6, 
+                                    cellSize - 6, 
+                                    10
                                 );
+                                this.boardCtx.fill();
+                                
+                                this.boardCtx.strokeStyle = canPlace ? '#69F0AE' : '#FF5252';
+                                this.boardCtx.lineWidth = 3;
+                                this.boardCtx.beginPath();
+                                this.boardCtx.roundRect(
+                                    x * cellSize + 3, 
+                                    y * cellSize + 3, 
+                                    cellSize - 6, 
+                                    cellSize - 6, 
+                                    10
+                                );
+                                this.boardCtx.stroke();
                             }
                         }
                     }
@@ -752,10 +1027,82 @@
                 };
             }
             
+            drawStaticBoard() {
+                const cellSize = this.boardCanvas.width / 9;
+                this.boardCtx.clearRect(0, 0, this.boardCanvas.width, this.boardCanvas.height);
+                
+                // Draw grid background
+                this.boardCtx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+                this.boardCtx.fillRect(0, 0, this.boardCanvas.width, this.boardCanvas.height);
+                
+                // Draw grid lines
+                this.boardCtx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                this.boardCtx.lineWidth = 1.5;
+                
+                for (let i = 0; i <= 9; i++) {
+                    this.boardCtx.beginPath();
+                    this.boardCtx.moveTo(i * cellSize, 0);
+                    this.boardCtx.lineTo(i * cellSize, this.boardCanvas.height);
+                    this.boardCtx.stroke();
+                    
+                    this.boardCtx.beginPath();
+                    this.boardCtx.moveTo(0, i * cellSize);
+                    this.boardCtx.lineTo(this.boardCanvas.width, i * cellSize);
+                    this.boardCtx.stroke();
+                }
+                
+                // Draw placed blocks
+                for (let r = 0; r < 9; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        if (this.grid[r][c] !== 0) {
+                            const block = this.grid[r][c];
+                            const x = c * cellSize;
+                            const y = r * cellSize;
+                            
+                            const gradient = this.boardCtx.createLinearGradient(
+                                x, y, x + cellSize, y + cellSize
+                            );
+                            
+                            if (block.color.includes('gradient')) {
+                                const colors = block.color.match(/#[0-9A-F]{6}/gi);
+                                if (colors) {
+                                    gradient.addColorStop(0, colors[0]);
+                                    gradient.addColorStop(1, colors[1]);
+                                }
+                            } else {
+                                gradient.addColorStop(0, block.color);
+                                gradient.addColorStop(1, block.color);
+                            }
+                            
+                            this.boardCtx.fillStyle = gradient;
+                            this.boardCtx.beginPath();
+                            this.boardCtx.roundRect(x + 3, y + 3, cellSize - 6, cellSize - 6, 10);
+                            this.boardCtx.fill();
+                            
+                            this.boardCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                            this.boardCtx.beginPath();
+                            this.boardCtx.roundRect(x + 8, y + 8, cellSize - 16, cellSize - 16, 6);
+                            this.boardCtx.fill();
+                            
+                            this.boardCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                            this.boardCtx.lineWidth = 3;
+                            this.boardCtx.beginPath();
+                            this.boardCtx.roundRect(x + 3, y + 3, cellSize - 6, cellSize - 6, 10);
+                            this.boardCtx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            draw() {
+                this.drawStaticBoard();
+            }
+            
             drop(e) {
                 if (!this.draggingBlock || !this.isDragging) return;
                 
                 this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
+                this.hideDragShadow();
                 
                 if (this.targetPosition && this.targetPosition.valid) {
                     this.placeBlock(
@@ -765,7 +1112,7 @@
                         this.targetPosition.y
                     );
                 } else {
-                    // Try to find valid position
+                    // Try to find nearest valid position
                     const shape = this.draggingBlock.shape;
                     let placed = false;
                     
@@ -844,7 +1191,7 @@
                 // Update stats and score
                 this.blocksUsed++;
                 const blockSize = this.calculateBlockSize(shape);
-                const placementScore = blockSize * 10 * this.level;
+                const placementScore = blockSize * 15 * this.level;
                 
                 // Show score popup
                 const cellSize = this.boardCanvas.width / 9;
@@ -879,56 +1226,10 @@
                 }, 1000);
             }
             
-            draw() {
-                const cellSize = this.boardCanvas.width / 9;
-                this.boardCtx.clearRect(0, 0, this.boardCanvas.width, this.boardCanvas.height);
-                
-                // Draw grid background
-                this.boardCtx.fillStyle = '#4a3775';
-                this.boardCtx.fillRect(0, 0, this.boardCanvas.width, this.boardCanvas.height);
-                
-                // Draw grid lines
-                this.boardCtx.strokeStyle = '#5d4a8a';
-                this.boardCtx.lineWidth = 1;
-                
-                for (let i = 0; i <= 9; i++) {
-                    this.boardCtx.beginPath();
-                    this.boardCtx.moveTo(i * cellSize, 0);
-                    this.boardCtx.lineTo(i * cellSize, this.boardCanvas.height);
-                    this.boardCtx.stroke();
-                    
-                    this.boardCtx.beginPath();
-                    this.boardCtx.moveTo(0, i * cellSize);
-                    this.boardCtx.lineTo(this.boardCanvas.width, i * cellSize);
-                    this.boardCtx.stroke();
-                }
-                
-                // Draw placed blocks
-                for (let r = 0; r < 9; r++) {
-                    for (let c = 0; c < 9; c++) {
-                        if (this.grid[r][c] !== 0) {
-                            const block = this.grid[r][c];
-                            const x = c * cellSize;
-                            const y = r * cellSize;
-                            
-                            // Solid color
-                            this.boardCtx.fillStyle = block.color;
-                            this.boardCtx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
-                            
-                            // Simple border
-                            this.boardCtx.strokeStyle = '#ffffff';
-                            this.boardCtx.lineWidth = 2;
-                            this.boardCtx.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
-                        }
-                    }
-                }
-            }
-            
             checkLines() {
                 const completedRows = [];
                 const completedCols = [];
                 
-                // Check rows
                 for (let r = 0; r < 9; r++) {
                     let rowComplete = true;
                     for (let c = 0; c < 9; c++) {
@@ -940,7 +1241,6 @@
                     if (rowComplete) completedRows.push(r);
                 }
                 
-                // Check columns
                 for (let c = 0; c < 9; c++) {
                     let colComplete = true;
                     for (let r = 0; r < 9; r++) {
@@ -953,31 +1253,27 @@
                 }
                 
                 if (completedRows.length > 0 || completedCols.length > 0) {
-                    // Calculate score
                     const totalLines = completedRows.length + completedCols.length;
-                    let lineScore = totalLines * 100 * this.level;
+                    let lineScore = totalLines * 120 * this.level;
                     
                     if (totalLines > 1) {
-                        lineScore += (totalLines - 1) * 50 * this.level;
+                        lineScore += (totalLines - 1) * 60 * this.level;
                     }
                     
                     if (completedRows.length > 0 && completedCols.length > 0) {
-                        lineScore += 200 * this.level;
+                        lineScore += 250 * this.level;
                     }
                     
-                    // Show score popup
                     const cellSize = this.boardCanvas.width / 9;
                     this.showScorePopup(lineScore, this.boardCanvas.width/2, this.boardCanvas.height/2);
                     
                     this.score += lineScore;
                     this.linesCleared += totalLines;
                     
-                    // Level up every 10 lines
                     if (this.linesCleared >= this.level * 10) {
                         this.levelUp();
                     }
                     
-                    // Clear lines immediately (without animation)
                     completedRows.forEach(r => {
                         for (let c = 0; c < 9; c++) {
                             this.grid[r][c] = 0;
@@ -998,62 +1294,56 @@
             levelUp() {
                 this.level++;
                 
-                // Update difficulty text
                 const difficultyText = document.getElementById('difficulty-text');
                 if (this.level <= 3) {
                     difficultyText.textContent = "Mudah";
-                    difficultyText.style.color = "#4caf50";
+                    difficultyText.style.color = "#69f0ae";
                 } else if (this.level <= 6) {
                     difficultyText.textContent = "Sedang";
-                    difficultyText.style.color = "#ff9800";
+                    difficultyText.style.color = "#ffb74d";
                 } else {
                     difficultyText.textContent = "Sulit";
-                    difficultyText.style.color = "#f44336";
+                    difficultyText.style.color = "#ff5252";
                 }
             }
             
             showHint() {
-                // Simple hint system
                 for (let block of this.currentBlocks) {
                     const shape = block.shape;
                     
                     for (let y = 0; y <= 9 - shape.length; y++) {
                         for (let x = 0; x <= 9 - shape[0].length; x++) {
                             if (this.canPlaceBlock(shape, x, y)) {
-                                // Show the valid position briefly
-                                this.drawHintPreview(x, y, shape);
+                                const cellSize = this.boardCanvas.width / 9;
+                                
+                                for (let r = 0; r < shape.length; r++) {
+                                    for (let c = 0; c < shape[r].length; c++) {
+                                        if (shape[r][c] === 1) {
+                                            const cellX = (x + c) * cellSize;
+                                            const cellY = (y + r) * cellSize;
+                                            
+                                            this.boardCtx.fillStyle = 'rgba(255, 235, 59, 0.4)';
+                                            this.boardCtx.beginPath();
+                                            this.boardCtx.roundRect(cellX + 3, cellY + 3, cellSize - 6, cellSize - 6, 8);
+                                            this.boardCtx.fill();
+                                            
+                                            this.boardCtx.strokeStyle = '#FFEB3B';
+                                            this.boardCtx.lineWidth = 3;
+                                            this.boardCtx.beginPath();
+                                            this.boardCtx.roundRect(cellX + 3, cellY + 3, cellSize - 6, cellSize - 6, 8);
+                                            this.boardCtx.stroke();
+                                        }
+                                    }
+                                }
+                                
+                                setTimeout(() => this.draw(), 1500);
                                 return;
                             }
                         }
                     }
                 }
                 
-                alert('Tidak ada posisi yang tersedia untuk blok saat ini!');
-            }
-            
-            drawHintPreview(x, y, shape) {
-                const cellSize = this.boardCanvas.width / 9;
-                
-                // Draw hint as yellow overlay
-                this.boardCtx.globalAlpha = 0.5;
-                this.boardCtx.fillStyle = '#FFEB3B';
-                
-                for (let r = 0; r < shape.length; r++) {
-                    for (let c = 0; c < shape[r].length; c++) {
-                        if (shape[r][c] === 1) {
-                            const cellX = (x + c) * cellSize;
-                            const cellY = (y + r) * cellSize;
-                            this.boardCtx.fillRect(cellX + 1, cellY + 1, cellSize - 2, cellSize - 2);
-                        }
-                    }
-                }
-                
-                this.boardCtx.globalAlpha = 1.0;
-                
-                // Remove hint after 1 second
-                setTimeout(() => {
-                    this.draw();
-                }, 1000);
+                alert('Tidak ada posisi yang tersedia! Coba gunakan blok lain.');
             }
             
             hasValidMoves() {
@@ -1074,6 +1364,7 @@
             
             endGame() {
                 this.gameOver = true;
+                this.hideDragShadow();
                 
                 document.getElementById('final-score').textContent = this.score;
                 document.getElementById('final-lines').textContent = this.linesCleared;
@@ -1090,9 +1381,11 @@
                 this.currentBlocks = [];
                 this.draggingBlock = null;
                 this.isDragging = false;
+                this.hideDragShadow();
                 
-                document.getElementById('difficulty-text').textContent = "Mudah";
-                document.getElementById('difficulty-text').style.color = "#4caf50";
+                const difficultyText = document.getElementById('difficulty-text');
+                difficultyText.textContent = "Mudah";
+                difficultyText.style.color = "#69f0ae";
                 
                 document.getElementById('game-over').style.display = 'none';
                 
@@ -1102,10 +1395,18 @@
             }
             
             updateUI() {
-                document.getElementById('score-display').textContent = this.score;
+                document.getElementById('score-display').textContent = this.score.toLocaleString();
                 document.getElementById('level').textContent = this.level;
                 document.getElementById('lines-cleared').textContent = this.linesCleared;
                 document.getElementById('blocks-used').textContent = this.blocksUsed;
+            }
+            
+            handleResize() {
+                if (window.innerWidth <= 768) {
+                    const size = Math.min(window.innerWidth - 40, 380);
+                    this.boardCanvas.width = size;
+                    this.boardCanvas.height = size;
+                }
             }
         }
 
