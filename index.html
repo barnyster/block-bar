@@ -9,6 +9,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         body {
@@ -18,8 +22,6 @@
             min-height: 100vh;
             padding: 20px;
             overflow-x: hidden;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
         .container {
@@ -59,7 +61,7 @@
             margin-bottom: 25px;
         }
 
-        /* Panel Informasi - DIPINDAHKAN KE BAWAH UNTUK MOBILE */
+        /* Panel Informasi - DI BAWAH UNTUK MOBILE */
         .game-info {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
@@ -68,7 +70,6 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            order: 3; /* Default: desktop order */
         }
 
         .info-section {
@@ -128,7 +129,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            order: 1; /* Default: desktop order */
         }
 
         #game-board {
@@ -140,7 +140,7 @@
             height: 480px !important;
         }
 
-        /* Blok Berikutnya - DIPINDAHKAN KE ATAS UNTUK MOBILE */
+        /* Blok Berikutnya - DI ATAS UNTUK MOBILE */
         .next-blocks-container {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
@@ -152,7 +152,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            order: 2; /* Default: desktop order */
         }
 
         .next-blocks-container h2 {
@@ -175,7 +174,7 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
             border: 3px solid rgba(255, 255, 255, 0.15);
-            cursor: grab;
+            cursor: move;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             width: 140px !important;
             height: 140px !important;
@@ -183,14 +182,14 @@
         }
 
         .next-block-canvas:hover {
-            transform: scale(1.08);
+            transform: scale(1.05);
             border-color: #00dbde;
             box-shadow: 0 0 25px rgba(0, 219, 222, 0.4);
         }
 
         .next-block-canvas.dragging {
-            opacity: 0.3;
-            border-color: #00dbde;
+            opacity: 0.4;
+            transform: scale(1.05);
         }
 
         /* Kontrol */
@@ -346,7 +345,6 @@
             position: fixed;
             pointer-events: none;
             z-index: 1000;
-            transition: transform 0.05s linear;
             filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
             width: 100px !important;
             height: 100px !important;
@@ -387,14 +385,13 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Responsive - MOBILE FIRST APPROACH */
+        /* Responsive */
         @media (max-width: 1100px) {
             .game-area {
                 flex-direction: column;
                 align-items: center;
             }
             
-            /* Untuk tablet: Game board tetap di tengah, blok di atas, skor di bawah */
             .game-board-container {
                 order: 1;
                 min-width: auto;
@@ -457,12 +454,6 @@
                 width: 80px !important;
                 height: 80px !important;
             }
-            
-            .cancel-info {
-                font-size: 0.8rem;
-                padding: 8px 16px;
-                bottom: 15px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -504,41 +495,6 @@
             .instruction-list {
                 grid-template-columns: 1fr;
             }
-            
-            /* Untuk mobile sangat kecil, blok jadi lebih kecil */
-            @media (max-width: 380px) {
-                #game-board {
-                    width: 280px !important;
-                    height: 280px !important;
-                }
-                
-                .next-block-canvas {
-                    width: 85px !important;
-                    height: 85px !important;
-                }
-                
-                .next-blocks {
-                    gap: 15px;
-                }
-            }
-        }
-        
-        /* Touch device specific */
-        @media (hover: none) and (pointer: coarse) {
-            .next-block-canvas:hover {
-                transform: none;
-                border-color: rgba(255, 255, 255, 0.15);
-                box-shadow: none;
-            }
-            
-            button:hover {
-                transform: none;
-                box-shadow: none;
-            }
-            
-            .cancel-info {
-                display: block !important;
-            }
         }
     </style>
 </head>
@@ -547,11 +503,11 @@
         <div class="header">
             <h1>BLOCK BARRR</h1>
             <p class="subtitle">Tempatkan blok warna-warni, ledakkan baris & kolom, raih skor tertinggi!</p>
-            <p class="subtitle" style="font-size: 0.9rem; color: #ffb74d;">Geser blok ke papan, tekan ESC untuk membatalkan</p>
+            <p class="subtitle" style="font-size: 0.9rem; color: #ffb74d;">Klik & drag blok ke papan, tekan ESC untuk membatalkan</p>
         </div>
 
         <div class="game-area">
-            <!-- Game Board - TETAP DI TENGAH -->
+            <!-- Game Board -->
             <div class="game-board-container">
                 <canvas id="game-board" width="480" height="480"></canvas>
                 <div id="game-over" class="game-over">
@@ -622,7 +578,7 @@
         <div class="instructions">
             <h2>CARA BERMAIN</h2>
             <ul class="instruction-list">
-                <li><strong>Geser dan lepaskan</strong> blok dari panel kanan ke papan game</li>
+                <li><strong>Klik & drag</strong> blok dari panel kanan ke papan game</li>
                 <li><strong>Bayangan hijau</strong> menunjukkan posisi valid untuk penempatan</li>
                 <li><strong>Bayangan merah</strong> menunjukkan posisi tidak valid</li>
                 <li><strong>Isi baris atau kolom penuh</strong> untuk menghapusnya dan dapatkan skor</li>
@@ -632,14 +588,13 @@
             </ul>
         </div>
         
-        <!-- Cancel Drag Info (mobile only) -->
         <div class="cancel-info" id="cancel-info">
             Tekan ESC atau lepas di luar papan untuk membatalkan
         </div>
     </div>
 
     <script>
-        // Warna-warni blok yang sangat menarik dengan gradien
+        // Warna-warni blok
         const BLOCK_COLORS = [
             'linear-gradient(135deg, #FF0080, #FF8C00)',
             'linear-gradient(135deg, #00DBDE, #FC00FF)',
@@ -659,7 +614,7 @@
             'linear-gradient(135deg, #834D9B, #D04ED6)'
         ];
 
-        // Bentuk blok yang menarik
+        // Bentuk blok
         const BLOCK_SHAPES = [
             [[1]],
             [[1, 1]],
@@ -695,12 +650,10 @@
                 this.gameOver = false;
                 this.currentBlocks = [];
                 this.draggingBlock = null;
-                this.lastMousePos = {x: 0, y: 0};
                 this.isDragging = false;
                 this.dragShadowCanvas = null;
                 this.dragShadowCtx = null;
-                this.lastAnimationTime = 0;
-                this.animationId = null;
+                this.lastMousePos = {x: 0, y: 0};
                 this.targetPosition = null;
                 
                 // Canvas elements
@@ -718,10 +671,11 @@
                 this.generateNextBlocks();
                 this.createDragShadow();
                 this.draw();
-                this.startAnimationLoop();
                 
                 // Handle window resize
                 window.addEventListener('resize', () => this.handleResize());
+                
+                console.log('Game initialized');
             }
             
             createDragShadow() {
@@ -743,127 +697,283 @@
                 document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
                 document.getElementById('play-again-btn').addEventListener('click', () => this.restartGame());
                 
-                // Drag and drop events untuk setiap blok
+                // Drag and drop events - SANGAT SEDERHANA
                 this.nextCanvases.forEach((canvas, index) => {
-                    // Mouse events
+                    // Mouse down
                     canvas.addEventListener('mousedown', (e) => {
-                        if (e.button === 0 && !this.gameOver) { // Hanya klik kiri
-                            this.startDrag(e, index);
-                        }
+                        console.log('Mouse down on block', index);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.startDrag(e, index);
                     });
                     
-                    // Touch events untuk mobile
+                    // Touch start (untuk mobile)
                     canvas.addEventListener('touchstart', (e) => {
-                        if (!this.gameOver) {
-                            e.preventDefault();
-                            this.startDrag(e, index);
-                        }
+                        console.log('Touch start on block', index);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.startDrag(e, index);
                     }, { passive: false });
                     
-                    // Mencegah default behavior
-                    canvas.addEventListener('dragstart', (e) => e.preventDefault());
+                    // Prevent default drag behavior
+                    canvas.addEventListener('dragstart', (e) => {
+                        e.preventDefault();
+                        return false;
+                    });
                     
+                    // Touch action
                     canvas.style.touchAction = 'none';
                 });
                 
-                // Mouse move untuk menggerakkan shadow
+                // Mouse move - SEDERHANA
                 document.addEventListener('mousemove', (e) => {
-                    this.lastMousePos.x = e.clientX;
-                    this.lastMousePos.y = e.clientY;
-                    
                     if (this.isDragging) {
                         e.preventDefault();
-                        this.updateDragShadowPosition(e.clientX, e.clientY);
+                        this.handleDragMove(e.clientX, e.clientY);
                     }
                 });
                 
-                // Touch move untuk mobile
+                // Touch move - SEDERHANA
                 document.addEventListener('touchmove', (e) => {
-                    if (!this.isDragging) return;
-                    e.preventDefault();
-                    const touch = e.touches[0];
-                    this.lastMousePos.x = touch.clientX;
-                    this.lastMousePos.y = touch.clientY;
-                    this.updateDragShadowPosition(touch.clientX, touch.clientY);
+                    if (this.isDragging && e.touches.length > 0) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        this.handleDragMove(touch.clientX, touch.clientY);
+                    }
                 }, { passive: false });
                 
-                // Mouse up untuk melepas blok
+                // Mouse up
                 document.addEventListener('mouseup', (e) => {
                     if (this.isDragging) {
-                        this.drop(e);
+                        e.preventDefault();
+                        this.handleDrop(e.clientX, e.clientY);
                     }
                 });
                 
-                // Touch end untuk mobile
+                // Touch end
                 document.addEventListener('touchend', (e) => {
                     if (this.isDragging) {
                         e.preventDefault();
-                        this.drop(e);
+                        const touch = e.changedTouches[0];
+                        this.handleDrop(touch.clientX, touch.clientY);
                     }
                 });
                 
-                // Cancel drag dengan ESC
+                // Cancel dengan ESC
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && this.isDragging) {
                         this.cancelDrag();
                     }
                 });
                 
-                // Cancel drag jika klik di luar papan (untuk mouse)
+                // Cancel jika klik di luar papan
                 document.addEventListener('mousedown', (e) => {
                     if (this.isDragging) {
-                        const isOnCanvas = e.target === this.boardCanvas || 
-                                         e.target.closest('.game-board-container');
-                        if (!isOnCanvas) {
+                        const isOnBoard = e.target === this.boardCanvas || 
+                                        e.target.closest('.game-board-container');
+                        if (!isOnBoard) {
                             this.cancelDrag();
                         }
                     }
                 });
                 
-                // Tampilkan info cancel untuk mobile
-                const cancelInfo = document.getElementById('cancel-info');
-                if ('ontouchstart' in window) {
-                    cancelInfo.style.display = 'block';
+                console.log('Event listeners setup complete');
+            }
+            
+            startDrag(e, blockIndex) {
+                if (this.gameOver) {
+                    console.log('Game over, cannot drag');
+                    return;
+                }
+                
+                const block = this.currentBlocks[blockIndex];
+                if (!block) {
+                    console.log('No block at index', blockIndex);
+                    return;
+                }
+                
+                console.log('Starting drag of block', blockIndex, block);
+                
+                // Simpan blok yang sedang di-drag
+                this.draggingBlock = {
+                    shape: JSON.parse(JSON.stringify(block.shape)),
+                    color: block.color,
+                    size: this.calculateBlockSize(block.shape),
+                    originalIndex: blockIndex
+                };
+                
+                this.isDragging = true;
+                this.nextCanvases[blockIndex].classList.add('dragging');
+                
+                // Tampilkan shadow
+                this.showDragShadow(block.color, block.shape);
+                
+                // Simpan posisi awal
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+                this.lastMousePos = {x: clientX, y: clientY};
+                
+                // Set posisi shadow
+                const shadowSize = 100;
+                this.dragShadowCanvas.style.left = (clientX - shadowSize/2) + 'px';
+                this.dragShadowCanvas.style.top = (clientY - shadowSize/2) + 'px';
+                this.dragShadowCanvas.style.display = 'block';
+                
+                // Update preview awal
+                this.updatePreview(clientX, clientY);
+            }
+            
+            showDragShadow(color, shape) {
+                this.dragShadowCtx.clearRect(0, 0, 100, 100);
+                
+                const blockWidth = shape[0].length;
+                const blockHeight = shape.length;
+                const cellSize = 100 / Math.max(blockWidth, blockHeight, 3);
+                
+                for (let r = 0; r < blockHeight; r++) {
+                    for (let c = 0; c < blockWidth; c++) {
+                        if (shape[r][c] === 1) {
+                            const x = c * cellSize;
+                            const y = r * cellSize;
+                            
+                            // Buat gradient
+                            const gradient = this.dragShadowCtx.createLinearGradient(x, y, x + cellSize, y + cellSize);
+                            if (color.includes('gradient')) {
+                                const colors = color.match(/#[0-9A-F]{6}/gi);
+                                if (colors) {
+                                    gradient.addColorStop(0, colors[0] + 'CC');
+                                    gradient.addColorStop(1, colors[1] + 'CC');
+                                }
+                            }
+                            
+                            this.dragShadowCtx.fillStyle = gradient;
+                            this.dragShadowCtx.beginPath();
+                            this.dragShadowCtx.roundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 6);
+                            this.dragShadowCtx.fill();
+                            
+                            // Border
+                            this.dragShadowCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                            this.dragShadowCtx.lineWidth = 2;
+                            this.dragShadowCtx.beginPath();
+                            this.dragShadowCtx.roundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 6);
+                            this.dragShadowCtx.stroke();
+                        }
+                    }
                 }
             }
             
-            startAnimationLoop() {
-                const animate = (timestamp) => {
-                    if (this.isDragging && this.draggingBlock) {
-                        this.updateDragShadow();
-                    }
-                    this.animationId = requestAnimationFrame(animate);
-                };
-                this.animationId = requestAnimationFrame(animate);
-            }
-            
-            updateDragShadowPosition(clientX, clientY) {
-                if (!this.isDragging || !this.dragShadowCanvas) return;
+            handleDragMove(clientX, clientY) {
+                if (!this.isDragging || !this.draggingBlock) return;
                 
                 // Update posisi shadow
                 const shadowSize = 100;
-                const targetX = clientX - shadowSize / 2;
-                const targetY = clientY - shadowSize / 2;
+                this.dragShadowCanvas.style.left = (clientX - shadowSize/2) + 'px';
+                this.dragShadowCanvas.style.top = (clientY - shadowSize/2) + 'px';
                 
-                this.dragShadowCanvas.style.left = `${targetX}px`;
-                this.dragShadowCanvas.style.top = `${targetY}px`;
+                // Update preview
+                this.updatePreview(clientX, clientY);
                 
-                // Update preview di board
-                const now = Date.now();
-                if (now - this.lastAnimationTime > 16) {
-                    this.lastAnimationTime = now;
-                    const boardRect = this.boardCanvas.getBoundingClientRect();
-                    const cellSize = this.boardCanvas.width / 9;
+                this.lastMousePos = {x: clientX, y: clientY};
+            }
+            
+            updatePreview(clientX, clientY) {
+                if (!this.draggingBlock) return;
+                
+                // Hitung posisi di papan
+                const boardRect = this.boardCanvas.getBoundingClientRect();
+                const cellSize = this.boardCanvas.width / 9;
+                
+                let gridX = Math.floor((clientX - boardRect.left) / cellSize);
+                let gridY = Math.floor((clientY - boardRect.top) / cellSize);
+                
+                // Batasi dalam grid
+                const shape = this.draggingBlock.shape;
+                if (gridX + shape[0].length > 9) gridX = 9 - shape[0].length;
+                if (gridY + shape.length > 9) gridY = 9 - shape.length;
+                if (gridX < 0) gridX = 0;
+                if (gridY < 0) gridY = 0;
+                
+                // Gambar preview
+                this.drawBoardPreview(gridX, gridY);
+                
+                // Simpan posisi target
+                this.targetPosition = {
+                    x: gridX,
+                    y: gridY,
+                    valid: this.canPlaceBlock(shape, gridX, gridY)
+                };
+            }
+            
+            handleDrop(clientX, clientY) {
+                if (!this.isDragging || !this.draggingBlock) return;
+                
+                console.log('Dropping block');
+                
+                // Hapus class dragging
+                this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
+                
+                // Sembunyikan shadow
+                this.hideDragShadow();
+                
+                // Jika ada posisi target dan valid
+                if (this.targetPosition && this.targetPosition.valid) {
+                    this.placeBlock(
+                        this.draggingBlock.shape,
+                        this.draggingBlock.color,
+                        this.targetPosition.x,
+                        this.targetPosition.y
+                    );
+                } else {
+                    // Coba cari posisi valid
+                    let placed = false;
+                    const shape = this.draggingBlock.shape;
                     
-                    // Hitung posisi di grid
-                    let gridX = Math.floor((clientX - boardRect.left) / cellSize);
-                    let gridY = Math.floor((clientY - boardRect.top) / cellSize);
+                    for (let y = 0; y <= 9 - shape.length; y++) {
+                        for (let x = 0; x <= 9 - shape[0].length; x++) {
+                            if (this.canPlaceBlock(shape, x, y)) {
+                                this.placeBlock(shape, this.draggingBlock.color, x, y);
+                                placed = true;
+                                break;
+                            }
+                        }
+                        if (placed) break;
+                    }
                     
-                    // Batasi agar tidak keluar dari grid
-                    if (gridX < 0) gridX = 0;
-                    if (gridY < 0) gridY = 0;
+                    // Jika tidak ditemukan, batalkan
+                    if (!placed) {
+                        this.cancelDrag();
+                    }
+                }
+                
+                // Reset state
+                this.isDragging = false;
+                this.draggingBlock = null;
+                this.targetPosition = null;
+            }
+            
+            hideDragShadow() {
+                if (this.dragShadowCanvas) {
+                    this.dragShadowCanvas.style.display = 'none';
+                }
+            }
+            
+            cancelDrag() {
+                console.log('Canceling drag');
+                
+                if (this.isDragging && this.draggingBlock) {
+                    // Hapus class dragging
+                    this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
                     
-                    this.drawBoardPreview(gridX, gridY);
+                    // Sembunyikan shadow
+                    this.hideDragShadow();
+                    
+                    // Reset state
+                    this.isDragging = false;
+                    this.draggingBlock = null;
+                    this.targetPosition = null;
+                    
+                    // Redraw board
+                    this.draw();
                 }
             }
             
@@ -910,7 +1020,6 @@
                                 const x = offsetX + c * cellSize;
                                 const y = offsetY + r * cellSize;
                                 
-                                // Buat gradient
                                 const gradient = ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
                                 if (block.color.includes('gradient')) {
                                     const colors = block.color.match(/#[0-9A-F]{6}/gi);
@@ -921,19 +1030,15 @@
                                 }
                                 
                                 ctx.fillStyle = gradient;
-                                
-                                // Gambar blok dengan rounded corners
                                 ctx.beginPath();
                                 ctx.roundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 8);
                                 ctx.fill();
                                 
-                                // Highlight di tengah
                                 ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
                                 ctx.beginPath();
                                 ctx.roundRect(x + 6, y + 6, cellSize - 12, cellSize - 12, 6);
                                 ctx.fill();
                                 
-                                // Border
                                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
                                 ctx.lineWidth = 3;
                                 ctx.beginPath();
@@ -945,151 +1050,15 @@
                 });
             }
             
-            startDrag(e, blockIndex) {
-                if (this.gameOver) return;
-                
-                const block = this.currentBlocks[blockIndex];
-                if (!block) return;
-                
-                console.log('Start drag block', blockIndex);
-                
-                // Simpan block yang sedang di-drag
-                this.draggingBlock = {
-                    shape: JSON.parse(JSON.stringify(block.shape)),
-                    color: block.color,
-                    size: block.size,
-                    originalIndex: blockIndex
-                };
-                
-                // Tampilkan shadow
-                this.showDragShadow(block.color, block.shape);
-                
-                // Dapatkan posisi awal
-                const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-                const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-                
-                this.isDragging = true;
-                this.nextCanvases[blockIndex].classList.add('dragging');
-                
-                // Set posisi awal shadow
-                const shadowSize = 100;
-                this.dragShadowCanvas.style.left = `${clientX - shadowSize / 2}px`;
-                this.dragShadowCanvas.style.top = `${clientY - shadowSize / 2}px`;
-                this.dragShadowCanvas.style.display = 'block';
-                
-                // Prevent default untuk mencegah seleksi teks dll
-                if (e.preventDefault) e.preventDefault();
-                return false;
-            }
-            
-            showDragShadow(color, shape) {
-                this.dragShadowCtx.clearRect(0, 0, 100, 100);
-                
-                const blockWidth = shape[0].length;
-                const blockHeight = shape.length;
-                const maxDim = Math.max(blockWidth, blockHeight, 3);
-                const cellSize = 100 / maxDim;
-                
-                // Gambar shadow
-                for (let r = 0; r < blockHeight; r++) {
-                    for (let c = 0; c < blockWidth; c++) {
-                        if (shape[r][c] === 1) {
-                            const x = c * cellSize;
-                            const y = r * cellSize;
-                            
-                            // Buat gradient untuk shadow
-                            const gradient = this.dragShadowCtx.createLinearGradient(x, y, x + cellSize, y + cellSize);
-                            if (color.includes('gradient')) {
-                                const colors = color.match(/#[0-9A-F]{6}/gi);
-                                if (colors) {
-                                    gradient.addColorStop(0, colors[0] + 'CC');
-                                    gradient.addColorStop(1, colors[1] + 'CC');
-                                }
-                            }
-                            
-                            this.dragShadowCtx.fillStyle = gradient;
-                            this.dragShadowCtx.beginPath();
-                            this.dragShadowCtx.roundRect(x + 1, y + 1, cellSize - 2, cellSize - 2, 6);
-                            this.dragShadowCtx.fill();
-                            
-                            // Border shadow
-                            this.dragShadowCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-                            this.dragShadowCtx.lineWidth = 2;
-                            this.dragShadowCtx.beginPath();
-                            this.dragShadowCtx.roundRect(x + 1, y + 1, cellSize - 2, cellSize - 2, 6);
-                            this.dragShadowCtx.stroke();
-                        }
-                    }
-                }
-            }
-            
-            updateDragShadow() {
-                if (!this.isDragging || !this.dragShadowCanvas) return;
-                
-                // Update posisi shadow dengan smoothing
-                const currentX = parseFloat(this.dragShadowCanvas.style.left);
-                const currentY = parseFloat(this.dragShadowCanvas.style.top);
-                
-                if (!isNaN(currentX) && !isNaN(currentY)) {
-                    const shadowSize = 100;
-                    const targetX = this.lastMousePos.x - shadowSize / 2;
-                    const targetY = this.lastMousePos.y - shadowSize / 2;
-                    
-                    const lerpFactor = 0.3;
-                    const newX = currentX + (targetX - currentX) * lerpFactor;
-                    const newY = currentY + (targetY - currentY) * lerpFactor;
-                    
-                    this.dragShadowCanvas.style.left = `${newX}px`;
-                    this.dragShadowCanvas.style.top = `${newY}px`;
-                }
-            }
-            
-            hideDragShadow() {
-                if (this.dragShadowCanvas) {
-                    this.dragShadowCanvas.style.display = 'none';
-                }
-            }
-            
-            cancelDrag() {
-                if (this.isDragging && this.draggingBlock) {
-                    console.log('Cancel drag');
-                    
-                    // Hapus class dragging
-                    this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
-                    
-                    // Sembunyikan shadow
-                    this.hideDragShadow();
-                    
-                    // Reset state
-                    this.draggingBlock = null;
-                    this.isDragging = false;
-                    this.targetPosition = null;
-                    
-                    // Redraw board
-                    this.draw();
-                }
-            }
-            
             drawBoardPreview(gridX, gridY) {
-                // Gambar board statis dulu
+                // Gambar board statis
                 this.drawStaticBoard();
                 
                 if (!this.draggingBlock) return;
                 
                 const shape = this.draggingBlock.shape;
                 const cellSize = this.boardCanvas.width / 9;
-                
-                // Adjust posisi agar tidak keluar dari grid
-                let adjustedX = gridX;
-                let adjustedY = gridY;
-                
-                if (adjustedX + shape[0].length > 9) adjustedX = 9 - shape[0].length;
-                if (adjustedY + shape.length > 9) adjustedY = 9 - shape.length;
-                if (adjustedX < 0) adjustedX = 0;
-                if (adjustedY < 0) adjustedY = 0;
-                
-                // Cek apakah bisa ditempatkan
-                const canPlace = this.canPlaceBlock(shape, adjustedX, adjustedY);
+                const canPlace = this.canPlaceBlock(shape, gridX, gridY);
                 
                 // Gambar preview
                 this.boardCtx.globalAlpha = 0.6;
@@ -1097,61 +1066,41 @@
                 for (let r = 0; r < shape.length; r++) {
                     for (let c = 0; c < shape[r].length; c++) {
                         if (shape[r][c] === 1) {
-                            const x = adjustedX + c;
-                            const y = adjustedY + r;
+                            const x = gridX + c;
+                            const y = gridY + r;
                             
-                            const cellX = x * cellSize;
-                            const cellY = y * cellSize;
-                            
-                            // Buat gradient untuk preview
-                            const gradient = this.boardCtx.createLinearGradient(
-                                cellX, cellY,
-                                cellX + cellSize, cellY + cellSize
-                            );
-                            
-                            if (this.draggingBlock.color.includes('gradient')) {
-                                const colors = this.draggingBlock.color.match(/#[0-9A-F]{6}/gi);
-                                if (colors) {
-                                    gradient.addColorStop(0, canPlace ? colors[0] + 'AA' : '#FF5252AA');
-                                    gradient.addColorStop(1, canPlace ? colors[1] + 'AA' : '#FF8A80AA');
+                            if (x >= 0 && x < 9 && y >= 0 && y < 9) {
+                                const cellX = x * cellSize;
+                                const cellY = y * cellSize;
+                                
+                                const gradient = this.boardCtx.createLinearGradient(
+                                    cellX, cellY, cellX + cellSize, cellY + cellSize
+                                );
+                                
+                                if (this.draggingBlock.color.includes('gradient')) {
+                                    const colors = this.draggingBlock.color.match(/#[0-9A-F]{6}/gi);
+                                    if (colors) {
+                                        gradient.addColorStop(0, canPlace ? colors[0] + 'AA' : '#FF5252AA');
+                                        gradient.addColorStop(1, canPlace ? colors[1] + 'AA' : '#FF8A80AA');
+                                    }
                                 }
+                                
+                                this.boardCtx.fillStyle = gradient;
+                                this.boardCtx.beginPath();
+                                this.boardCtx.roundRect(cellX + 3, cellY + 3, cellSize - 6, cellSize - 6, 10);
+                                this.boardCtx.fill();
+                                
+                                this.boardCtx.strokeStyle = canPlace ? '#69F0AE' : '#FF5252';
+                                this.boardCtx.lineWidth = 3;
+                                this.boardCtx.beginPath();
+                                this.boardCtx.roundRect(cellX + 3, cellY + 3, cellSize - 6, cellSize - 6, 10);
+                                this.boardCtx.stroke();
                             }
-                            
-                            this.boardCtx.fillStyle = gradient;
-                            this.boardCtx.beginPath();
-                            this.boardCtx.roundRect(
-                                cellX + 3, 
-                                cellY + 3, 
-                                cellSize - 6, 
-                                cellSize - 6, 
-                                10
-                            );
-                            this.boardCtx.fill();
-                            
-                            // Border preview
-                            this.boardCtx.strokeStyle = canPlace ? '#69F0AE' : '#FF5252';
-                            this.boardCtx.lineWidth = 3;
-                            this.boardCtx.beginPath();
-                            this.boardCtx.roundRect(
-                                cellX + 3, 
-                                cellY + 3, 
-                                cellSize - 6, 
-                                cellSize - 6, 
-                                10
-                            );
-                            this.boardCtx.stroke();
                         }
                     }
                 }
                 
                 this.boardCtx.globalAlpha = 1.0;
-                
-                // Simpan posisi target
-                this.targetPosition = {
-                    x: adjustedX,
-                    y: adjustedY,
-                    valid: canPlace
-                };
             }
             
             drawStaticBoard() {
@@ -1167,13 +1116,11 @@
                 this.boardCtx.lineWidth = 1.5;
                 
                 for (let i = 0; i <= 9; i++) {
-                    // Vertical lines
                     this.boardCtx.beginPath();
                     this.boardCtx.moveTo(i * cellSize, 0);
                     this.boardCtx.lineTo(i * cellSize, this.boardCanvas.height);
                     this.boardCtx.stroke();
                     
-                    // Horizontal lines
                     this.boardCtx.beginPath();
                     this.boardCtx.moveTo(0, i * cellSize);
                     this.boardCtx.lineTo(this.boardCanvas.width, i * cellSize);
@@ -1188,11 +1135,7 @@
                             const x = c * cellSize;
                             const y = r * cellSize;
                             
-                            // Buat gradient
-                            const gradient = this.boardCtx.createLinearGradient(
-                                x, y, x + cellSize, y + cellSize
-                            );
-                            
+                            const gradient = this.boardCtx.createLinearGradient(x, y, x + cellSize, y + cellSize);
                             if (block.color.includes('gradient')) {
                                 const colors = block.color.match(/#[0-9A-F]{6}/gi);
                                 if (colors) {
@@ -1206,13 +1149,11 @@
                             this.boardCtx.roundRect(x + 3, y + 3, cellSize - 6, cellSize - 6, 10);
                             this.boardCtx.fill();
                             
-                            // Highlight
                             this.boardCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
                             this.boardCtx.beginPath();
                             this.boardCtx.roundRect(x + 8, y + 8, cellSize - 16, cellSize - 16, 6);
                             this.boardCtx.fill();
                             
-                            // Border
                             this.boardCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
                             this.boardCtx.lineWidth = 3;
                             this.boardCtx.beginPath();
@@ -1227,62 +1168,13 @@
                 this.drawStaticBoard();
             }
             
-            drop(e) {
-                if (!this.isDragging || !this.draggingBlock) return;
-                
-                console.log('Drop block');
-                
-                // Hapus class dragging
-                this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
-                
-                // Sembunyikan shadow
-                this.hideDragShadow();
-                
-                // Cek apakah posisi valid
-                if (this.targetPosition && this.targetPosition.valid) {
-                    // Tempatkan blok
-                    this.placeBlock(
-                        this.draggingBlock.shape,
-                        this.draggingBlock.color,
-                        this.targetPosition.x,
-                        this.targetPosition.y
-                    );
-                } else {
-                    // Jika tidak valid, cari posisi terdekat yang valid
-                    let placed = false;
-                    const shape = this.draggingBlock.shape;
-                    
-                    // Cari semua posisi yang mungkin
-                    for (let y = 0; y <= 9 - shape.length; y++) {
-                        for (let x = 0; x <= 9 - shape[0].length; x++) {
-                            if (this.canPlaceBlock(shape, x, y)) {
-                                this.placeBlock(shape, this.draggingBlock.color, x, y);
-                                placed = true;
-                                break;
-                            }
-                        }
-                        if (placed) break;
-                    }
-                    
-                    // Jika tidak ada posisi valid, batalkan drag
-                    if (!placed) {
-                        this.cancelDrag();
-                    }
-                }
-                
-                // Reset state
-                this.targetPosition = null;
-            }
-            
             canPlaceBlock(shape, gridX, gridY) {
-                // Cek batas grid
                 if (gridX < 0 || gridY < 0 || 
                     gridX + shape[0].length > 9 || 
                     gridY + shape.length > 9) {
                     return false;
                 }
                 
-                // Cek apakah sel-sel kosong
                 for (let r = 0; r < shape.length; r++) {
                     for (let c = 0; c < shape[r].length; c++) {
                         if (shape[r][c] === 1) {
@@ -1297,9 +1189,9 @@
             }
             
             placeBlock(shape, color, gridX, gridY) {
-                console.log('Place block at', gridX, gridY);
+                console.log('Placing block at', gridX, gridY);
                 
-                // Tempatkan blok di grid
+                // Place block
                 for (let r = 0; r < shape.length; r++) {
                     for (let c = 0; c < shape[r].length; c++) {
                         if (shape[r][c] === 1) {
@@ -1311,10 +1203,10 @@
                     }
                 }
                 
-                // Hapus blok yang digunakan dari currentBlocks
+                // Remove used block
                 this.currentBlocks.splice(this.draggingBlock.originalIndex, 1);
                 
-                // Tambahkan blok baru
+                // Add new block
                 const shapeIndex = Math.floor(Math.random() * BLOCK_SHAPES.length);
                 const colorIndex = Math.floor(Math.random() * BLOCK_COLORS.length);
                 this.currentBlocks.push({
@@ -1329,7 +1221,7 @@
                 const blockSize = this.calculateBlockSize(shape);
                 const placementScore = blockSize * 15 * this.level;
                 
-                // Tampilkan score popup
+                // Show score popup
                 const cellSize = this.boardCanvas.width / 9;
                 const popupX = gridX * cellSize + (shape[0].length * cellSize) / 2;
                 const popupY = gridY * cellSize + (shape.length * cellSize) / 2;
@@ -1337,18 +1229,14 @@
                 
                 this.score += placementScore;
                 
-                // Cek baris/kolom yang lengkap
+                // Check for completed lines
                 this.checkLines();
                 
                 // Update UI
                 this.updateUI();
                 this.drawNextBlocks();
                 
-                // Reset dragging state
-                this.draggingBlock = null;
-                this.isDragging = false;
-                
-                // Cek apakah masih ada langkah valid
+                // Check game over
                 if (!this.hasValidMoves()) {
                     this.endGame();
                 }
@@ -1372,7 +1260,6 @@
                 const completedRows = [];
                 const completedCols = [];
                 
-                // Cek baris yang lengkap
                 for (let r = 0; r < 9; r++) {
                     let rowComplete = true;
                     for (let c = 0; c < 9; c++) {
@@ -1384,7 +1271,6 @@
                     if (rowComplete) completedRows.push(r);
                 }
                 
-                // Cek kolom yang lengkap
                 for (let c = 0; c < 9; c++) {
                     let colComplete = true;
                     for (let r = 0; r < 9; r++) {
@@ -1396,41 +1282,34 @@
                     if (colComplete) completedCols.push(c);
                 }
                 
-                // Jika ada baris/kolom yang lengkap
                 if (completedRows.length > 0 || completedCols.length > 0) {
                     const totalLines = completedRows.length + completedCols.length;
                     let lineScore = totalLines * 120 * this.level;
                     
-                    // Bonus untuk multiple lines
                     if (totalLines > 1) {
                         lineScore += (totalLines - 1) * 60 * this.level;
                     }
                     
-                    // Bonus untuk cross (baris dan kolom)
                     if (completedRows.length > 0 && completedCols.length > 0) {
                         lineScore += 250 * this.level;
                     }
                     
-                    // Tampilkan score popup
                     const cellSize = this.boardCanvas.width / 9;
                     this.showScorePopup(lineScore, this.boardCanvas.width/2, this.boardCanvas.height/2);
                     
                     this.score += lineScore;
                     this.linesCleared += totalLines;
                     
-                    // Level up
                     if (this.linesCleared >= this.level * 10) {
                         this.levelUp();
                     }
                     
-                    // Hapus baris yang lengkap
                     completedRows.forEach(r => {
                         for (let c = 0; c < 9; c++) {
                             this.grid[r][c] = 0;
                         }
                     });
                     
-                    // Hapus kolom yang lengkap
                     completedCols.forEach(c => {
                         for (let r = 0; r < 9; r++) {
                             this.grid[r][c] = 0;
@@ -1561,10 +1440,17 @@
             }
         }
 
-        window.addEventListener('load', () => {
-            const game = new BlockBlastGame();
-            window.game = game;
-            console.log('Game loaded');
+        // Initialize game when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing game...');
+            try {
+                const game = new BlockBlastGame();
+                window.game = game;
+                console.log('Game initialized successfully');
+            } catch (error) {
+                console.error('Error initializing game:', error);
+                alert('Error loading game. Please refresh the page.');
+            }
         });
     </script>
 </body>
