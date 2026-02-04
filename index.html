@@ -174,7 +174,7 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
             border: 3px solid rgba(255, 255, 255, 0.15);
-            cursor: move;
+            cursor: grab;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             width: 140px !important;
             height: 140px !important;
@@ -369,22 +369,6 @@
             100% { transform: translateY(-80px) scale(0.9); opacity: 0; }
         }
 
-        /* Cancel Drag Info */
-        .cancel-info {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: none;
-            z-index: 1001;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
         /* Responsive */
         @media (max-width: 1100px) {
             .game-area {
@@ -503,7 +487,7 @@
         <div class="header">
             <h1>BLOCK BARRR</h1>
             <p class="subtitle">Tempatkan blok warna-warni, ledakkan baris & kolom, raih skor tertinggi!</p>
-            <p class="subtitle" style="font-size: 0.9rem; color: #ffb74d;">Klik & drag blok ke papan, tekan ESC atau kembalikan ke panel untuk membatalkan</p>
+            <p class="subtitle" style="font-size: 0.9rem; color: #ffb74d;">Klik, TAHAN, dan DRAG blok ke papan. Tekan ESC untuk membatalkan</p>
         </div>
 
         <div class="game-area">
@@ -578,18 +562,14 @@
         <div class="instructions">
             <h2>CARA BERMAIN</h2>
             <ul class="instruction-list">
-                <li><strong>Klik & drag</strong> blok dari panel kanan ke papan game</li>
+                <li><strong>Klik, TAHAN, dan DRAG</strong> blok dari panel kanan ke papan game</li>
                 <li><strong>Bayangan hijau</strong> menunjukkan posisi valid untuk penempatan</li>
                 <li><strong>Bayangan merah</strong> menunjukkan posisi tidak valid</li>
-                <li><strong>Kembalikan blok ke panel</strong> atau <strong>tekan ESC</strong> untuk membatalkan drag</li>
+                <li><strong>Tekan ESC kapan saja</strong> untuk membatalkan drag blok</li>
                 <li><strong>Isi baris atau kolom penuh</strong> untuk menghapusnya dan dapatkan skor</li>
                 <li><strong>Blok besar = skor besar!</strong> Gunakan strategi untuk skor tinggi</li>
                 <li><strong>Game over</strong> ketika tidak ada ruang tersisa untuk blok</li>
             </ul>
-        </div>
-        
-        <div class="cancel-info" id="cancel-info">
-            Kembalikan blok ke panel atau tekan ESC untuk membatalkan
         </div>
     </div>
 
@@ -649,13 +629,16 @@
                 this.blocksUsed = 0;
                 this.gameOver = false;
                 this.currentBlocks = [];
+                
+                // Drag state
                 this.draggingBlock = null;
                 this.isDragging = false;
+                this.hasDragged = false; // Untuk membedakan klik vs drag
+                this.dragStartPos = {x: 0, y: 0};
                 this.dragShadowCanvas = null;
                 this.dragShadowCtx = null;
                 this.lastMousePos = {x: 0, y: 0};
                 this.targetPosition = null;
-                this.isOverPanel = false; // Untuk track jika kursor di atas panel blok
                 
                 // Canvas elements
                 this.boardCanvas = document.getElementById('game-board');
@@ -666,7 +649,6 @@
                     document.getElementById('next-block-3')
                 ];
                 this.nextCtxs = this.nextCanvases.map(c => c.getContext('2d'));
-                this.nextBlocksContainer = document.querySelector('.next-blocks-container');
                 
                 // Setup
                 this.setupEventListeners();
@@ -677,7 +659,7 @@
                 // Handle window resize
                 window.addEventListener('resize', () => this.handleResize());
                 
-                console.log('Game initialized');
+                console.log('Game initialized - HARUS DRAG, TIDAK BISA KLIK SAJA');
             }
             
             createDragShadow() {
@@ -699,43 +681,77 @@
                 document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
                 document.getElementById('play-again-btn').addEventListener('click', () => this.restartGame());
                 
-                // Drag and drop events
+                // Drag and drop events - SISTEM BARU
                 this.nextCanvases.forEach((canvas, index) => {
-                    // Mouse down
+                    // Mouse down - TANDAI MULAI
                     canvas.addEventListener('mousedown', (e) => {
-                        console.log('Mouse down on block', index);
+                        console.log('Mouse DOWN on block', index);
                         e.preventDefault();
                         e.stopPropagation();
-                        this.startDrag(e, index);
+                        this.startDragAttempt(e, index);
                     });
                     
-                    // Touch start (untuk mobile)
+                    // Touch start - TANDAI MULAI
                     canvas.addEventListener('touchstart', (e) => {
-                        console.log('Touch start on block', index);
+                        console.log('Touch START on block', index);
                         e.preventDefault();
                         e.stopPropagation();
-                        this.startDrag(e, index);
+                        this.startDragAttempt(e, index);
                     }, { passive: false });
                     
-                    // Prevent default drag behavior
+                    // Mencegah default behavior
                     canvas.addEventListener('dragstart', (e) => {
                         e.preventDefault();
                         return false;
                     });
                     
                     canvas.style.touchAction = 'none';
+                    
+                    // Mencegah klik biasa
+                    canvas.addEventListener('click', (e) => {
+                        if (this.isDragging) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                    });
                 });
                 
-                // Mouse move
+                // Mouse move - CEK JIKA SUDAH BERGERAK
                 document.addEventListener('mousemove', (e) => {
+                    if (this.draggingBlock && !this.hasDragged) {
+                        // Cek apakah sudah bergerak cukup jauh dari titik awal
+                        const dx = e.clientX - this.dragStartPos.x;
+                        const dy = e.clientY - this.dragStartPos.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance > 10) { // Threshold 10px
+                            console.log('Dragging started (movement detected)');
+                            this.hasDragged = true;
+                            this.startActualDrag();
+                        }
+                    }
+                    
                     if (this.isDragging) {
                         e.preventDefault();
                         this.handleDragMove(e.clientX, e.clientY);
                     }
                 });
                 
-                // Touch move
+                // Touch move - CEK JIKA SUDAH BERGERAK
                 document.addEventListener('touchmove', (e) => {
+                    if (this.draggingBlock && !this.hasDragged && e.touches.length > 0) {
+                        const touch = e.touches[0];
+                        const dx = touch.clientX - this.dragStartPos.x;
+                        const dy = touch.clientY - this.dragStartPos.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance > 10) { // Threshold 10px
+                            console.log('Dragging started (touch movement detected)');
+                            this.hasDragged = true;
+                            this.startActualDrag();
+                        }
+                    }
+                    
                     if (this.isDragging && e.touches.length > 0) {
                         e.preventDefault();
                         const touch = e.touches[0];
@@ -743,44 +759,63 @@
                     }
                 }, { passive: false });
                 
-                // Mouse up
+                // Mouse up - HANYA ACTION JIKA SUDAH DRAG
                 document.addEventListener('mouseup', (e) => {
                     if (this.isDragging) {
+                        console.log('Mouse UP - processing drop');
                         e.preventDefault();
                         this.handleDrop(e.clientX, e.clientY);
+                    } else if (this.draggingBlock) {
+                        // Jika hanya klik tanpa drag, batalkan
+                        console.log('Mouse UP - click without drag, canceling');
+                        this.cancelDragAttempt();
                     }
                 });
                 
-                // Touch end
+                // Touch end - HANYA ACTION JIKA SUDAH DRAG
                 document.addEventListener('touchend', (e) => {
                     if (this.isDragging) {
+                        console.log('Touch END - processing drop');
                         e.preventDefault();
                         const touch = e.changedTouches[0];
                         this.handleDrop(touch.clientX, touch.clientY);
+                    } else if (this.draggingBlock) {
+                        // Jika hanya tap tanpa drag, batalkan
+                        console.log('Touch END - tap without drag, canceling');
+                        this.cancelDragAttempt();
                     }
                 });
                 
                 // Cancel dengan ESC
                 document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && this.isDragging) {
-                        console.log('ESC pressed, canceling drag');
-                        this.cancelDrag();
+                    if (e.key === 'Escape') {
+                        if (this.isDragging) {
+                            console.log('ESC pressed during drag - canceling');
+                            this.cancelDrag();
+                        } else if (this.draggingBlock) {
+                            console.log('ESC pressed during drag attempt - canceling');
+                            this.cancelDragAttempt();
+                        }
                     }
                 });
                 
-                // Track jika kursor di atas panel blok
-                this.nextBlocksContainer.addEventListener('mouseenter', () => {
-                    this.isOverPanel = true;
+                // Cancel jika klik di luar
+                document.addEventListener('mousedown', (e) => {
+                    if (this.isDragging || this.draggingBlock) {
+                        const isOnBlock = this.nextCanvases.some(canvas => canvas.contains(e.target));
+                        if (!isOnBlock) {
+                            console.log('Clicked outside - canceling drag');
+                            if (this.isDragging) {
+                                this.cancelDrag();
+                            } else {
+                                this.cancelDragAttempt();
+                            }
+                        }
+                    }
                 });
-                
-                this.nextBlocksContainer.addEventListener('mouseleave', () => {
-                    this.isOverPanel = false;
-                });
-                
-                console.log('Event listeners setup complete');
             }
             
-            startDrag(e, blockIndex) {
+            startDragAttempt(e, blockIndex) {
                 if (this.gameOver) {
                     console.log('Game over, cannot drag');
                     return;
@@ -792,37 +827,47 @@
                     return;
                 }
                 
-                console.log('Starting drag of block', blockIndex, block);
+                console.log('Drag attempt started for block', blockIndex);
                 
-                // Simpan blok yang sedang di-drag (HANYA COPY, TIDAK DIHAPUS DARI ARRAY)
+                // Simpan posisi awal
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+                
+                this.dragStartPos = {x: clientX, y: clientY};
+                this.lastMousePos = {x: clientX, y: clientY};
+                
+                // Simpan reference ke blok (tapi belum mulai drag sebenarnya)
                 this.draggingBlock = {
                     shape: JSON.parse(JSON.stringify(block.shape)),
                     color: block.color,
                     size: this.calculateBlockSize(block.shape),
                     originalIndex: blockIndex,
-                    // Simpan data asli untuk bisa kembali
                     originalBlock: { ...block }
                 };
                 
-                this.isDragging = true;
+                this.hasDragged = false; // Reset flag drag
                 this.nextCanvases[blockIndex].classList.add('dragging');
                 
-                // Tampilkan shadow
-                this.showDragShadow(block.color, block.shape);
+                console.log('Waiting for movement to start actual drag...');
+            }
+            
+            startActualDrag() {
+                if (!this.draggingBlock) return;
                 
-                // Simpan posisi awal
-                const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-                const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-                this.lastMousePos = {x: clientX, y: clientY};
+                console.log('Starting actual drag');
+                this.isDragging = true;
+                
+                // Tampilkan shadow
+                this.showDragShadow(this.draggingBlock.color, this.draggingBlock.shape);
                 
                 // Set posisi shadow
                 const shadowSize = 100;
-                this.dragShadowCanvas.style.left = (clientX - shadowSize/2) + 'px';
-                this.dragShadowCanvas.style.top = (clientY - shadowSize/2) + 'px';
+                this.dragShadowCanvas.style.left = (this.lastMousePos.x - shadowSize/2) + 'px';
+                this.dragShadowCanvas.style.top = (this.lastMousePos.y - shadowSize/2) + 'px';
                 this.dragShadowCanvas.style.display = 'block';
                 
                 // Update preview awal
-                this.updatePreview(clientX, clientY);
+                this.updatePreview(this.lastMousePos.x, this.lastMousePos.y);
             }
             
             showDragShadow(color, shape) {
@@ -870,22 +915,8 @@
                 this.dragShadowCanvas.style.left = (clientX - shadowSize/2) + 'px';
                 this.dragShadowCanvas.style.top = (clientY - shadowSize/2) + 'px';
                 
-                // Cek apakah kursor di atas panel blok
-                const panelRect = this.nextBlocksContainer.getBoundingClientRect();
-                this.isOverPanel = (
-                    clientX >= panelRect.left &&
-                    clientX <= panelRect.right &&
-                    clientY >= panelRect.top &&
-                    clientY <= panelRect.bottom
-                );
-                
-                // Update preview hanya jika tidak di atas panel
-                if (!this.isOverPanel) {
-                    this.updatePreview(clientX, clientY);
-                } else {
-                    // Jika di atas panel, hilangkan preview
-                    this.drawStaticBoard();
-                }
+                // Update preview
+                this.updatePreview(clientX, clientY);
                 
                 this.lastMousePos = {x: clientX, y: clientY};
             }
@@ -897,31 +928,43 @@
                 const boardRect = this.boardCanvas.getBoundingClientRect();
                 const cellSize = this.boardCanvas.width / 9;
                 
-                let gridX = Math.floor((clientX - boardRect.left) / cellSize);
-                let gridY = Math.floor((clientY - boardRect.top) / cellSize);
-                
-                // Batasi dalam grid
-                const shape = this.draggingBlock.shape;
-                if (gridX + shape[0].length > 9) gridX = 9 - shape[0].length;
-                if (gridY + shape.length > 9) gridY = 9 - shape.length;
-                if (gridX < 0) gridX = 0;
-                if (gridY < 0) gridY = 0;
-                
-                // Gambar preview
-                this.drawBoardPreview(gridX, gridY);
-                
-                // Simpan posisi target
-                this.targetPosition = {
-                    x: gridX,
-                    y: gridY,
-                    valid: this.canPlaceBlock(shape, gridX, gridY)
-                };
+                // Cek apakah kursor di atas papan
+                if (clientX >= boardRect.left && clientX <= boardRect.right &&
+                    clientY >= boardRect.top && clientY <= boardRect.bottom) {
+                    
+                    let gridX = Math.floor((clientX - boardRect.left) / cellSize);
+                    let gridY = Math.floor((clientY - boardRect.top) / cellSize);
+                    
+                    // Batasi dalam grid
+                    const shape = this.draggingBlock.shape;
+                    if (gridX + shape[0].length > 9) gridX = 9 - shape[0].length;
+                    if (gridY + shape.length > 9) gridY = 9 - shape.length;
+                    if (gridX < 0) gridX = 0;
+                    if (gridY < 0) gridY = 0;
+                    
+                    // Gambar preview
+                    this.drawBoardPreview(gridX, gridY);
+                    
+                    // Simpan posisi target
+                    this.targetPosition = {
+                        x: gridX,
+                        y: gridY,
+                        valid: this.canPlaceBlock(shape, gridX, gridY)
+                    };
+                } else {
+                    // Jika tidak di papan, hilangkan preview
+                    this.drawStaticBoard();
+                    this.targetPosition = null;
+                }
             }
             
             handleDrop(clientX, clientY) {
-                if (!this.isDragging || !this.draggingBlock) return;
+                if (!this.isDragging || !this.draggingBlock) {
+                    console.log('Not dragging, ignoring drop');
+                    return;
+                }
                 
-                console.log('Dropping block');
+                console.log('Processing drop at', clientX, clientY);
                 
                 // Hapus class dragging
                 this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
@@ -929,23 +972,7 @@
                 // Sembunyikan shadow
                 this.hideDragShadow();
                 
-                // Cek apakah dijatuhkan di panel blok
-                const panelRect = this.nextBlocksContainer.getBoundingClientRect();
-                const isOverPanel = (
-                    clientX >= panelRect.left &&
-                    clientX <= panelRect.right &&
-                    clientY >= panelRect.top &&
-                    clientY <= panelRect.bottom
-                );
-                
-                if (isOverPanel) {
-                    // Jika dijatuhkan di panel, BATALKAN (blok tetap di panel)
-                    console.log('Dropped on panel, canceling');
-                    this.cancelDrag();
-                    return;
-                }
-                
-                // Cek apakah dijatuhkan di papan dengan posisi valid
+                // Cek apakah dijatuhkan di papan
                 const boardRect = this.boardCanvas.getBoundingClientRect();
                 const isOverBoard = (
                     clientX >= boardRect.left &&
@@ -956,7 +983,7 @@
                 
                 if (isOverBoard && this.targetPosition && this.targetPosition.valid) {
                     // Jika di papan dan posisi valid, tempatkan blok
-                    console.log('Placing block on board');
+                    console.log('Placing block on board at', this.targetPosition);
                     this.placeBlock(
                         this.draggingBlock.shape,
                         this.draggingBlock.color,
@@ -965,7 +992,7 @@
                     );
                 } else {
                     // Jika tidak valid atau tidak di papan, batalkan
-                    console.log('Invalid drop position, canceling');
+                    console.log('Invalid drop position or not over board, canceling');
                     this.cancelDrag();
                 }
             }
@@ -976,8 +1003,27 @@
                 }
             }
             
+            cancelDragAttempt() {
+                console.log('Canceling drag attempt (click without drag)');
+                
+                if (this.draggingBlock) {
+                    // Hapus class dragging
+                    this.nextCanvases[this.draggingBlock.originalIndex].classList.remove('dragging');
+                    
+                    // Reset state
+                    this.draggingBlock = null;
+                    this.hasDragged = false;
+                    this.targetPosition = null;
+                    
+                    // Redraw board
+                    this.draw();
+                    
+                    console.log('Drag attempt canceled successfully');
+                }
+            }
+            
             cancelDrag() {
-                console.log('Canceling drag - block returns to panel');
+                console.log('Canceling actual drag');
                 
                 if (this.isDragging && this.draggingBlock) {
                     // Hapus class dragging
@@ -986,19 +1032,16 @@
                     // Sembunyikan shadow
                     this.hideDragShadow();
                     
-                    // Blok TIDAK dihapus dari currentBlocks karena hanya copy
-                    // Jadi blok tetap ada di panel
-                    
-                    // Reset state
+                    // Reset semua state
                     this.isDragging = false;
                     this.draggingBlock = null;
+                    this.hasDragged = false;
                     this.targetPosition = null;
-                    this.isOverPanel = false;
                     
-                    // Redraw board (tanpa preview)
+                    // Redraw board
                     this.draw();
                     
-                    console.log('Drag canceled successfully, block remains in panel');
+                    console.log('Drag canceled successfully');
                 }
             }
             
@@ -1228,7 +1271,7 @@
                     }
                 }
                 
-                // Hapus blok yang digunakan dari currentBlocks (SEKARANG DIHAPUS)
+                // Hapus blok yang digunakan dari currentBlocks
                 this.currentBlocks.splice(this.draggingBlock.originalIndex, 1);
                 
                 // Tambahkan blok baru
@@ -1264,6 +1307,7 @@
                 // Reset dragging state
                 this.draggingBlock = null;
                 this.isDragging = false;
+                this.hasDragged = false;
                 this.targetPosition = null;
                 
                 // Check game over
@@ -1441,6 +1485,7 @@
                 this.currentBlocks = [];
                 this.draggingBlock = null;
                 this.isDragging = false;
+                this.hasDragged = false;
                 this.hideDragShadow();
                 
                 const difficultyText = document.getElementById('difficulty-text');
@@ -1477,6 +1522,7 @@
                 const game = new BlockBlastGame();
                 window.game = game;
                 console.log('Game initialized successfully');
+                console.log('INSTRUKSI: Klik, TAHAN, dan DRAG blok. Jangan hanya klik!');
             } catch (error) {
                 console.error('Error initializing game:', error);
                 alert('Error loading game. Please refresh the page.');
